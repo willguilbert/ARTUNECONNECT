@@ -1,0 +1,30 @@
+.banner {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 25%; /* 16:9 aspect ratio */
+  overflow: hidden;
+}
+.banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(
+    255,
+    255,
+    255,
+    0.5
+  ); /* Adjust the alpha value to control transparency */
+}
+.banner img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensure the image covers the container while maintaining aspect ratio */
+  opacity: 0.8;
+}
