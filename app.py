@@ -1,5 +1,5 @@
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for
 import pymysql, pymysql.cursors
 
 
@@ -46,5 +46,18 @@ def login():
         return render_template('Login.html', message="Invalid username or password")
     else:
         return render_template('Login.html')
+
+@app.route('/albums')
+def albums():
+    return render_template('Albums.html')
+@app.route('/merch')
+def merch():
+    return render_template('Merch.html')
+
+@app.route('/universities')
+def universities():
+    return render_template('Universities.html')
+
+
 if __name__ == '__main__':
     app.run()
