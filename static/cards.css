@@ -1,17 +1,94 @@
+h3 {
+  margin-left: 80px;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
 .horizontal-scroll-container {
-  width: 100%;
+  /*width: 100%;*/
   overflow-x: auto;
   white-space: nowrap;
   display: flex;
   padding: 20px;
   box-sizing: border-box;
+  margin: 0 60px; /* Adjust the margin as needed */
 }
 
-.card {
-  flex: 0 0 auto; /* Prevent cards from stretching to fill available space */
-  width: 200px; /* Adjust the width of each card as needed */
-  margin-right: 20px; /* Adjust the margin between cards as needed */
-  border: 1px solid #ddd; /* Optional: Add border for styling */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add box shadow for styling */
+/*.card {
+  flex: 0 0 auto;
+  width: 200px;
+  margin-right: 20px;
+  border: 1px solid #ddd; 
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
   box-sizing: border-box;
+}*/
+.card {
+  flex: 0 0 auto;
+  text-align: center;
+  width: 200px;
+  margin-right: 20px;
+  box-sizing: border-box;
+  border: 1px solid black;
+  border-radius: 8px; /* Adjust the value as needed */
+}
+
+.card img {
+  max-width: 80%;
+  margin: 5px auto; /* Center the image horizontally */
+  height: auto;
+  border: 5px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 8px; /* Adjust the value as needed */
+}
+
+.card-title {
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: auto;
+  font-size: 16px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* Ensure the title spans the entire height of the card */
+  box-sizing: border-box; /* Include padding and border in height calculation */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browse-button {
+  background-color: #ffe8a3;
+  color: #333;
+  padding: 5px 40px; /* Adjust the padding for size */
+  border: none;
+  cursor: pointer;
+  margin-top: 80px;
+  margin-bottom: 80px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  border-radius: 50px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+}
+a {
+  color: black;
+  text-decoration: none;
+  font-size: 24px;
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap; /* Allow tags to wrap to the next row */
+  margin-top: 5px;
+}
+.tag {
+  background-color: white;
+  border: 1px solid #000;
+  padding: 5px;
+  margin-right: 5px;
+  font-size: 12px;
+  color: black;
+  border-radius: 3px;
+  margin-bottom: 5px;
+  margin-left: 5px;
 }

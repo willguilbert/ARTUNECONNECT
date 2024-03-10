@@ -28,3 +28,9 @@
   object-fit: cover; /* Ensure the image covers the container while maintaining aspect ratio */
   opacity: 0.8;
 }
+footer {
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+}

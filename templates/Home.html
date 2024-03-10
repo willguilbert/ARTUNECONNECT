@@ -1,9 +1,115 @@
 {% extends 'NavBar.html' %}
-
+{% block head %}
+<link href="{{url_for('static', filename='/album.css')}}" rel="stylesheet" />
+<link href="{{url_for('static', filename='/cards.css')}}" rel="stylesheet" /> 
+{% endblock %}
 {% block content %}
+<h3>Top Albums</h3>
+<div class="horizontal-scroll-container">
+  <div class="card">
+    <img src="/static/banner.jpeg" alt="Card 1 Image">
+    <h4 class="card-title">SPIKESSPIKESPIKESPIKESPIKES </h4>
+    <div class="tags">
+      <div class="tag">Tag1</div>
+      <div class="tag">Tag2</div>
+      <div class="tag">Tag3</div>  
+  </div>
+</div>
+<div class="card">
+    <img src="path/to/image2.jpg" alt="Card 2 Image">
+    <h4 class="card-title">Card 2 Title</h4>
+</div>
+<div class="card">
+    <img src="path/to/image3.jpg" alt="Card 3 Image">
+    <h4 class="card-title">Card 3 Title</h4>
+</div>
+  <!-- Add more cards as needed -->
+</div>
+<button class="browse-button">
+  <a href="{{url_for('albums')}}">Parcourir les albums</a>
+</button>
+<h3>Artistes en tendance</h3>
+<div class="horizontal-scroll-container">
+  <div class="card">
+    <img src="/static/banner.jpeg" alt="Card 1 Image">
+    <h4 class="card-title">SPIKESSPIKESPIKESPIKESPIKES </h4>
+    <div class="tags">
+      <div class="tag">Tag1</div>
+      <div class="tag">Tag2</div>
+      <div class="tag">Tag3</div>  
+  </div>
+</div>
+<div class="card">
+    <img src="path/to/image2.jpg" alt="Card 2 Image">
+    <h4 class="card-title">Card 2 Title</h4>
+</div>
+<div class="card">
+    <img src="path/to/image3.jpg" alt="Card 3 Image">
+    <h4 class="card-title">Card 3 Title</h4>
+</div>
+  <!-- Add more cards as needed -->
+  <!-- Add more cards as needed -->
+</div>
+<button class="browse-button">
+  <a href="{{url_for('albums')}}">Parcourir les artistes</a>
+</button>
+<h3>Universités à proximité</h3>
+<div class="horizontal-scroll-container">
+  <div class="card">
+    <img src="/static/banner.jpeg" alt="Card 1 Image">
+    <h4 class="card-title">SPIKESSPIKESPIKESPIKESPIKES </h4>
+    <div class="tags">
+      <div class="tag">Tag1</div>
+      <div class="tag">Tag2</div>
+      <div class="tag">Tag3</div>  
+  </div>
+</div>
+<div class="card">
+    <img src="path/to/image2.jpg" alt="Card 2 Image">
+    <h4 class="card-title">Card 2 Title</h4>
+</div>
+<div class="card">
+    <img src="path/to/image3.jpg" alt="Card 3 Image">
+    <h4 class="card-title">Card 3 Title</h4>
+</div>
+<div class="card">
+  <img src="path/to/image3.jpg" alt="Card 3 Image">
+  <h4 class="card-title">Card 3 Title</h4>
+</div>
+<div class="card">
+  <img src="path/to/image3.jpg" alt="Card 3 Image">
+  <h4 class="card-title">Card 3 Title</h4>
+</div>
+<div class="card">
+  <img src="path/to/image3.jpg" alt="Card 3 Image">
+  <h4 class="card-title">Card 3 Title</h4>
+</div>
+<div class="card">
+  <img src="path/to/image3.jpg" alt="Card 3 Image">
+  <h4 class="card-title">Card 3 Title</h4>
+</div>
 
-<h1>Welcome to Artune Connect ! </h1>
+<div class="card">
+  <img src="path/to/image3.jpg" alt="Card 3 Image">
+  <h4 class="card-title">Card 3 Title</h4>
+</div>
+<div class="card">
+  <img src="path/to/image3.jpg" alt="Card 3 Image">
+  <h4 class="card-title">Card 3 Title</h4>
+</div>
 
+
+  <!-- Add more cards as needed -->
+</div>
+<button class="browse-button">
+  <a href="{{url_for('albums')}}">Parcourir les universités</a>
+</button>
+<script>
+  function scrollContainer(amount) {
+    const container = document.querySelector(".horizontal-scroll-container");
+    container.scrollLeft += amount;
+  }
+</script>
 {% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   </body>
