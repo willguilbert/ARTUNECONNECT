@@ -24,7 +24,7 @@ h3 {
 .card {
   flex: 0 0 auto;
   text-align: center;
-  width: 200px;
+  width: 15rem; /* can switch it up to 15% and min-width*/
   margin-right: 20px;
   box-sizing: border-box;
   border: 1px solid black;
@@ -39,7 +39,6 @@ h3 {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   border-radius: 8px; /* Adjust the value as needed */
 }
-
 .card-title {
   margin-left: 5px;
   margin-right: 5px;
@@ -49,13 +48,11 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%; /* Ensure the title spans the entire height of the card */
-  box-sizing: border-box; /* Include padding and border in height calculation */
+  height: 100%;
+  box-sizing: border-box;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
 }
-
 .browse-button {
   background-color: #ffe8a3;
   color: #333;
