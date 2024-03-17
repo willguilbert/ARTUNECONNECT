@@ -11,12 +11,11 @@ CREATE TABLE Utilisateur (
     photo_de_profil VARCHAR(256),
     bio varchar(1024),
     liens_reseaux_sociaux VARCHAR(256),
-    id_region INTEGER NOT NULL,
+    id_region INTEGER, -- NOT NULL enlevé, car ON DELETE SET NULL
 
     PRIMARY KEY (id_utilisateur),
     FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL,
-    UNIQUE (email, mot_de_passe)
-    -- UNIQUE (nom_utilisateur, mot_de_passe)
+    UNIQUE (email)
 );
 
 /*
@@ -53,7 +52,7 @@ DELIMITER ;
 CREATE TABLE Universite (
     id_universite INTEGER,
     nom VARCHAR(64),
-    id_region INTEGER NOT NULL,
+    id_region INTEGER, -- NOT NULL enlevé, car ON DELETE SET NULL
 
     PRIMARY KEY (id_universite),
     FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL
@@ -125,7 +124,7 @@ CREATE TABLE Artiste (
     email_artiste VARCHAR(64),
     biographie_artiste VARCHAR(1024),
     origine VARCHAR(32),
-    id_universite INTEGER NOT NULL,
+    id_universite INTEGER, -- NOT NULL enlevé, car ON DELETE SET NULL
     -- STYLES SOIT FOREIGN KEY OU ATTRIBUT COMPOSÉ
 
     PRIMARY KEY (id_artiste),
@@ -264,7 +263,7 @@ INSERT INTO Styles (id_style, nom) VALUES
 
 CREATE TABLE Merch (
     id_merch INTEGER,
-    id_produit INTEGER DEFAULT NULL, -- faudrait que ca soit default null, changé apres le trigger
+    id_produit INTEGER DEFAULT NULL, -- null, changé apres le trigger
     nom_article VARCHAR(32),
     image_art VARCHAR(256),
     couleur CHAR(6), -- hexa
@@ -272,7 +271,7 @@ CREATE TABLE Merch (
     typeArticle ENUM ('T-Shirt', 'Beanie', 'Hoodie'),
     id_artiste INTEGER NOT NULL,
 
-    PRIMARY KEY (id_merch, id_produit),
+    PRIMARY KEY (id_merch), -- enleve id_produit aussi (Ccomposee) car DEFAULT NULL
     FOREIGN KEY (id_produit) REFERENCES Produit (id_produit) ON DELETE CASCADE,
     FOREIGN KEY (id_artiste) REFERENCES Artiste (id_artiste) ON DELETE CASCADE
 );
@@ -307,11 +306,11 @@ CREATE TABLE Album (
     titre VARCHAR(32) NOT NULL,
     id_artiste INTEGER NOT NULL,
     id_style INTEGER NOT NULL,
-    id_produit INTEGER DEFAULT NULL, -- faudrait que ca soit default null, changé apres le trigger
-    format ENUM ('Numerique', 'Disque', 'Cassette', 'Vinyl'),
+    id_produit INTEGER DEFAULT NULL, -- null, changé apres le trigger
+    format ENUM ('Numerique', 'Disque', 'Cassette', 'Vinyl'), -- a voir
     noteglobal REAL,
-    photo_album VARCHAR(32) NOT NULL,
-    annee_parution DATE,
+    photo_album VARCHAR(32) NOT NULL, -- est ce qu'il est possible de ne pas en avoir
+    annee_parution INTEGER, -- etait DATE, modifie a INTEGER
     duree REAL DEFAULT 0.0, -- a regarder
 
     PRIMARY KEY(id_album),
@@ -406,7 +405,7 @@ CREATE TABLE Transaction (
     id_transaction INTEGER,
     id_produit INTEGER NOT NULL,
     id_utilisateur INTEGER NOT  NULL,
-    date DATE,
+    date_transaction DATE,
 
     PRIMARY KEY(id_transaction),
     FOREIGN KEY(id_produit) REFERENCES Produit (id_produit),
