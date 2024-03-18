@@ -168,10 +168,9 @@ INSERT INTO Artiste (id_artiste, nom_artiste, email_artiste, biographie_artiste,
     (2, 'Marcus Melody', 'marcus.melody@outlook.com', 'Embarking on a musical journey, weaving diverse melodies into a harmonious symphony.', 'Montreal', 1),
     (3, 'Olivia Echo', 'olivia.echo@gmail.com', 'Creating echoes of emotion through every note, a reflection of the soul in music.', 'Saguenay', 3),
     (4, 'Dylan Harmony', 'dylan.harmony@videotron.ca', 'Harmony in every chord, crafting musical pieces that resonate with the heart.', 'Halifax', 4),
-    (5, 'Ava Rhythm', 'ava.rhythm@gmail.com', 'Exploring the rhythmic landscapes of sound, creating vibrant and dynamic compositions.', 'Charlottetown', 5);
-INSERT INTO Artiste (id_artiste, nom_artiste, email_artiste, biographie_artiste, origine, id_universite) VALUES
-(6, 'Ava Rhythm', 'ava.rhythm@gmail.com', 'Exploring the rhythmic landscapes of sound, creating vibrant and dynamic compositions.', 'Charlottetown', 5),
-(7, 'Ava Rhythm', 'ava.rhythm@gmail.com', 'Exploring the rhythmic landscapes of sound, creating vibrant and dynamic compositions.', 'Charlottetown', 5);
+    (5, 'Ava Rhythm', 'ava.rhythm@gmail.com', 'Exploring the rhythmic landscapes of sound, creating vibrant and dynamic compositions.', 'Charlottetown', 5),
+    (6, 'Ava Rhythm', 'ava.rhythm@gmail.com', 'Exploring the rhythmic landscapes of sound, creating vibrant and dynamic compositions.', 'Charlottetown', 5),
+    (7, 'Ava Rhythm', 'ava.rhythm@gmail.com', 'Exploring the rhythmic landscapes of sound, creating vibrant and dynamic compositions.', 'Charlottetown', 5);
 
 INSERT INTO Styles (id_style, nom) VALUES
     (1, 'Pop'),
@@ -206,20 +205,18 @@ INSERT INTO Album (id_album, titre, id_artiste, id_style, id_produit, format,
     (2, 'For All The Dogs', 2, 2, 7, 'Numerique', 1, null, 2005, 25),
     (3, 'Eternal Atake', 3, 3, 8, 'Numerique', 2.2, null, 2024, 35.20),
     (4, 'Donda', 3, 4, 9, 'Numerique', 3.6, null, 2006, 2.22),
-    (5, 'UTOPIA', 5, 5, 10, 'Numerique', 4.4, null, 1999, 1);
-INSERT INTO Album (id_album, titre, id_artiste, id_style, id_produit, format,
-                   noteglobal, photo_album, annee_parution, duree) VALUES
-  (6, 'Graduation', 1, 1, 6, 'Numerique', 5, null, 2004, 25.50),
+    (5, 'UTOPIA', 5, 5, 10, 'Numerique', 4.4, null, 1999, 1),
+    (6, 'Graduation', 1, 1, 6, 'Numerique', 5, null, 2004, 25.50),
     (7, 'For All The Dogs', 2, 2, 7, 'Numerique', 1, null, 2005, 25),
     (8, 'Eternal Atake', 3, 3, 8, 'Numerique', 2.2, null, 2024, 35.20),
     (9, 'Donda', 3, 4, 9, 'Numerique', 3.6, null, 2006, 2.22),
     (10, 'UTOPIA', 5, 5, 10, 'Numerique', 4.4, null, 1999, 1),
-  (11, 'Graduation', 1, 1, 6, 'Numerique', 5, null, 2004, 25.50),
+    (11, 'Graduation', 1, 1, 6, 'Numerique', 5, null, 2004, 25.50),
     (12, 'For All The Dogs', 2, 2, 7, 'Numerique', 1, null, 2005, 25),
     (13, 'Eternal Atake', 3, 3, 8, 'Numerique', 2.2, null, 2024, 35.20),
     (14, 'Donda', 3, 4, 9, 'Numerique', 3.6, null, 2006, 2.22),
     (15, 'UTOPIA', 5, 5, 10, 'Numerique', 4.4, null, 1999, 1),
-  (16, 'Graduation', 1, 1, 6, 'Numerique', 5, null, 2004, 25.50),
+    (16, 'Graduation', 1, 1, 6, 'Numerique', 5, null, 2004, 25.50),
     (17, 'For All The Dogs', 2, 2, 7, 'Numerique', 1, null, 2005, 25),
     (18, 'Eternal Atake', 3, 3, 8, 'Numerique', 2.2, null, 2024, 35.20),
     (19, 'Donda', 3, 4, 9, 'Numerique', 3.6, null, 2006, 2.22),

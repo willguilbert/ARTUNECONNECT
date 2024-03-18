@@ -3,6 +3,8 @@ from flask import Flask, render_template, request, url_for
 import pymysql, pymysql.cursors
 import static.Home
 import static.Albums
+import static.Artistes
+import static.Universites
 
 
 
@@ -63,11 +65,13 @@ def merch():
 
 @app.route('/universities')
 def universities():
-    return render_template('Universities.html')
+    universites = static.Universites.getUniversites()
+    return render_template('Universites.html', universites=universites)
 
 @app.route('/artistes')
 def artistes():
-    return render_template('Artistes.html')
+    artistes = static.Artistes.getArtistes()
+    return render_template('Artistes.html', artistes=artistes)
 
 
 if __name__ == '__main__':
