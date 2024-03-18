@@ -1,15 +1,14 @@
-
 from flask import Flask, render_template, request, url_for
 import pymysql, pymysql.cursors
 import static.Home
 import static.Albums
 import static.Artistes
 import static.Universites
-
-
+import static.Album
 
 app = Flask(__name__)
 UserProfile = {}
+
 
 @app.route('/')
 def main():
@@ -18,16 +17,17 @@ def main():
     rowsUniversite = static.Home.getUniversite()
     return render_template('Home.html', rowsAlbum=rowsAlbums, rowsArtistes=rowsArtistes, rowsUniversite=rowsUniversite)
 
-@app.route("/login", methods=['GET','POST'])
+
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     if request.method == "POST":
 
-        email = '"'+request.form.get('username')+'"'
+        email = '"' + request.form.get('username') + '"'
         mdp = request.form.get('mdp')
 
         conn = pymysql.connect(host='localhost', user='root', password='1234', db='TEST_ARTUNECONNECT')
         try:
-            cmd = 'SELECT mot_de_passe FROM Utilisateur WHERE email='+email+';'
+            cmd = 'SELECT mot_de_passe FROM Utilisateur WHERE email=' + email + ';'
             cur = conn.cursor()
         except Exception as e:
             print(e)
@@ -35,7 +35,7 @@ def login():
         mdpVrai = cur.fetchone()
 
         if (mdpVrai != None) and (mdp == mdpVrai[0]):
-            cmd = 'SELECT * FROM Utilisateur WHERE email='+email+';'
+            cmd = 'SELECT * FROM Utilisateur WHERE email=' + email + ';'
             cur = conn.cursor()
             cur.execute(cmd)
             info = cur.fetchone()
@@ -43,11 +43,11 @@ def login():
             global UserProfile
             UserProfile['username'] = email
             UserProfile['email'] = info[2]
-            UserProfile['ville']= info[3]
-            UserProfile['bio']= info[4]
-            UserProfile['telephone']= info[5]
-            UserProfile['prenom']=info[7]
-            UserProfile['nom']= info[8]
+            UserProfile['ville'] = info[3]
+            UserProfile['bio'] = info[4]
+            UserProfile['telephone'] = info[5]
+            UserProfile['prenom'] = info[7]
+            UserProfile['nom'] = info[8]
             cur.close()
 
             return render_template('Userpage.html', profile=UserProfile)
@@ -55,18 +55,23 @@ def login():
     else:
         return render_template('Login.html')
 
+
 @app.route('/albums')
 def albums():
     albums = static.Albums.getAlbums()
     return render_template('Albums.html', albums=albums)
+
+
 @app.route('/merch')
 def merch():
     return render_template('Merch.html')
+
 
 @app.route('/universities')
 def universities():
     universites = static.Universites.getUniversites()
     return render_template('Universites.html', universites=universites)
+
 
 @app.route('/artistes')
 def artistes():
@@ -74,6 +79,11 @@ def artistes():
     return render_template('Artistes.html', artistes=artistes)
 
 
+@app.route('/album/<string:album_titre>')
+def album(album_titre):
+    album = static.Album.get_album_details(album_titre)
+    return render_template('Album.html', album=album)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-

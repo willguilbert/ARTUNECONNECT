@@ -222,6 +222,12 @@ INSERT INTO Album (id_album, titre, id_artiste, id_style, id_produit, format,
     (19, 'Donda', 3, 4, 9, 'Numerique', 3.6, null, 2006, 2.22),
     (20, 'UTOPIA', 5, 5, 10, 'Numerique', 4.4, null, 1999, 1);
 
+ALTER TABLE Album ADD COLUMN photo VARCHAR(255);
+UPDATE Album SET photo = 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/a1.webp' WHERE  id_album=1;
+UPDATE Album SET photo = 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/a10.webp' WHERE id_album=2;
+UPDATE Album SET photo = 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/a13.webp' WHERE id_album=3;
+
+
 INSERT INTO Chanson (id_chanson, id_album, titre, duree) VALUES
     (1, 1, 'Chanson A', 1),
     (2, 1, 'Chanson B', 1.33),
