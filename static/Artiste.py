@@ -1,14 +1,13 @@
-import pymysql
+from database import Database
 
-import pymysql
-
+database = Database()
+connection = database.get_connection()
+cursor = database.get_cursor()
 
 def getArtisteDetails(artiste_nom):
-    connection = pymysql.connect(host='localhost', user='root', password='1234', database='TEST_ARTUNECONNECT')
     artiste_details = {}
 
     try:
-        with connection.cursor(pymysql.cursors.DictCursor) as cursor:
             # Fetch the artist details
             cursor.execute("SELECT * FROM Artiste WHERE nom_artiste = %s", (artiste_nom,))
             artiste = cursor.fetchone()

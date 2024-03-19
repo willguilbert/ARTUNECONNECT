@@ -1,5 +1,5 @@
-import pymysql
 from database import Database
+
 database = Database()
 connection = database.get_connection()
 cursor = database.get_cursor()
