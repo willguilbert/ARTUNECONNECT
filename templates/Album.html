@@ -14,7 +14,7 @@
             </div>
             <div class="col-md-8">
                 <h2>{{ album['album']['titre'] }}</h2>
-                <p>{{ album['artiste']['nom_artiste'] }}</p>
+                <a href="{{ url_for('artiste', artiste_nom=album['artiste']['nom_artiste']) }}"  class="text-dark"><p>{{ album['artiste']['nom_artiste'] }}</p></a>
 
                 <button class="btn btn-outline-secondary" disabled>#{{ album['style'] }}</button>
                 <div>
@@ -43,7 +43,7 @@
                 <a href="#" class="btn btn-outline-primary mt-3 me-2"><i class="fa fa-dollar-sign"></i>Buy Now!</a>
             </div>
             <div class="col-6 text-end">
-                <a href="#" class="btn btn-primary mt-3">Suivre artiste</a>
+                <a class="btn btn-primary mt-3">Suivre artiste</a>
             </div>
             <div class="row">
                 <div class="col-12">

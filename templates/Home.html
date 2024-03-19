@@ -29,14 +29,16 @@
     <h3>Artistes en tendance</h3>
     <div class="horizontal-scroll-container">
         {% for artiste in rowsArtistes %}
-            <div class="card">
-                <img src="/static/banner.jpeg" alt="Card 1 Image">
-                <h4 class="card-title">{{ artiste.nom_artiste }} </h4>
-                <div class="tags">
-                    <div class="tag">{{ artiste.origine }}</div>
-                    <div class="tag">{{ artiste.id_universite }}</div>
+            <a href="{{ url_for('artiste', artiste_nom=artiste.nom_artiste) }}">
+                <div class="card">
+                    <img src="/static/banner.jpeg" alt="Card 1 Image">
+                    <h4 class="card-title">{{ artiste.nom_artiste }} </h4>
+                    <div class="tags">
+                        <div class="tag">{{ artiste.origine }}</div>
+                        <div class="tag">{{ artiste.id_universite }}</div>
+                    </div>
                 </div>
-            </div>
+            </a>
         {% endfor %}
     </div>
     <button class="browse-button">

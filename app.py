@@ -86,6 +86,13 @@ def album(album_titre):
     album = static.Album.get_album_details(album_titre)
     return render_template('Album.html', album=album)
 
+@app.route('/artiste/<string:artiste_nom>')
+def artiste(artiste_nom):
+    artiste = static.Artiste.getArtisteDetails(artiste_nom)
+    print(artiste)
+    return render_template('Artiste.html', artiste=artiste)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
