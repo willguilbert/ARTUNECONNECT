@@ -1,6 +1,7 @@
 
-const logIn = document.getElementById('login')
+const logIn = document.getElementById('btnConnexion')
 
 logIn.addEventListener('click', () =>{
     window.location.href = "/login";
 })
+
