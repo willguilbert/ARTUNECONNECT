@@ -1,20 +1,22 @@
 from flask import Flask, render_template, request, url_for
 import pymysql, pymysql.cursors
-import static.Home
+import static.Home as Home
 import static.Albums
 import static.Artistes
 import static.Universites
 import static.Album
+from database import Database
 
 app = Flask(__name__)
 UserProfile = {}
 
+database = Database()
 
 @app.route('/')
 def main():
-    rowsAlbums = static.Home.getAlbums()
-    rowsArtistes = static.Home.getArtistes()
-    rowsUniversite = static.Home.getUniversite()
+    rowsAlbums = Home.getAlbums()
+    rowsArtistes = Home.getArtistes()
+    rowsUniversite = Home.getUniversite()
     return render_template('Home.html', rowsAlbum=rowsAlbums, rowsArtistes=rowsArtistes, rowsUniversite=rowsUniversite)
 
 
