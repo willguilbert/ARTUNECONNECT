@@ -40,6 +40,7 @@ CREATE TABLE Utilisateur (
     UNIQUE (email)
 );
 
+
 CREATE TABLE Artiste (
     id_artiste INTEGER,
     nom_artiste VARCHAR(32),
