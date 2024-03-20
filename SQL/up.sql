@@ -1,5 +1,94 @@
 CREATE DATABASE IF NOT EXISTS ARTUNECONNECT;
-USE ARTUNECONNNECT;
+
+-- ** STYLES A AJOUTER **
+/*------------------------------------------------------------------------------------------------------*/
+
+-- Styles
+
+CREATE TABLE Styles (
+    id_style INTEGER,
+    nom VARCHAR(32),
+
+    PRIMARY KEY (id_style)
+);
+
+INSERT INTO Styles (id_style, nom) VALUES
+    (1, 'Pop'),
+    (2, 'Rock'),
+    (3, 'Hip Hop'),
+    (4, 'Jazz'),
+    (5, 'Country'),
+    (6, 'Electronique'),
+    (7, 'Classique'),
+    (8, 'Blues'),
+    (9, 'R&B'),
+    (10, 'Reggae');
+
+/*------------------------------------------------------------------------------------------------------*/
+
+-- REGION
+
+CREATE TABLE Region (
+    id_region INTEGER,
+    nom VARCHAR(64),
+
+    PRIMARY KEY (id_region)
+);
+
+
+INSERT INTO Region (id_region, nom) VALUES
+    (1, 'Abitibi-Témiscamingue'),
+    (2, 'Bas-Saint-Laurent'),
+    (3, 'Capitale-Nationale'),
+    (4, 'Estrie'),
+    (5, 'Mauricie'),
+    (6, 'Montréal'),
+    (7, 'Outaouais'),
+    (8, 'Saguenay – Lac-Saint-Jean');
+
+/*------------------------------------------------------------------------------------------------------*/
+-- Produit
+
+CREATE TABLE Produit (
+    id_produit INTEGER AUTO_INCREMENT,
+    prix REAL,
+
+    PRIMARY KEY (id_produit)
+);
+/*------------------------------------------------------------------------------------------------------*/
+
+-- UNIVERSITE
+
+CREATE TABLE Universite (
+    id_universite INTEGER,
+    nom VARCHAR(64),
+    id_region INTEGER, -- NOT NULL enlevé, car ON DELETE SET NULL
+
+    PRIMARY KEY (id_universite),
+    FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL
+);
+
+
+INSERT INTO Universite (id_universite, nom, id_region) VALUES
+    (1, 'Université du Québec en Abitibi-Témiscamingue', 1),
+    (2, 'Université du Québec à Rimouski', 2),
+    (3, 'École nationale d’administration publique', 3),
+    (4, 'Institut national de la recherche scientifique', 3),
+    (5, 'Université Laval', 3),
+    (6, 'Université Bishop’s', 4),
+    (7, 'Université de Sherbrooke', 4),
+    (8, 'Université du Québec à Trois-Rivières', 5),
+    (9, 'École des hautes études commerciales de Montréal', 6),
+    (10, 'École de technologie supérieure', 6),
+    (11, 'Polytechnique Montréal', 6),
+    (12, 'Université Concordia', 6),
+    (13, 'Université de Montréal', 6),
+    (14, 'Université McGill', 6),
+    (15, 'Université du Québec à Montréal', 6),
+    (16, 'Université du Québec en Outaouais', 7),
+    (17, 'Université du Québec à Chicoutimi', 8);
+
+
 CREATE TABLE Utilisateur (
     id_utilisateur INTEGER,
     -- nom_utilisateur VARCHAR(16),
@@ -43,41 +132,6 @@ CREATE TRIGGER utilisateur_existe_deja BEFORE INSERT ON Utilisateur FOR EACH ROW
 DELIMITER ;
 
 */
-
-
-/*------------------------------------------------------------------------------------------------------*/
-
--- UNIVERSITE
-
-CREATE TABLE Universite (
-    id_universite INTEGER,
-    nom VARCHAR(64),
-    id_region INTEGER, -- NOT NULL enlevé, car ON DELETE SET NULL
-
-    PRIMARY KEY (id_universite),
-    FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL
-);
-
-
-INSERT INTO Universite (id_universite, nom, id_region) VALUES
-    (1, 'Université du Québec en Abitibi-Témiscamingue', 1),
-    (2, 'Université du Québec à Rimouski', 2),
-    (3, 'École nationale d’administration publique', 3),
-    (4, 'Institut national de la recherche scientifique', 3),
-    (5, 'Université Laval', 3),
-    (6, 'Université Bishop’s', 4),
-    (7, 'Université de Sherbrooke', 4),
-    (8, 'Université du Québec à Trois-Rivières', 5),
-    (9, 'École des hautes études commerciales de Montréal', 6),
-    (10, 'École de technologie supérieure', 6),
-    (11, 'Polytechnique Montréal', 6),
-    (12, 'Université Concordia', 6),
-    (13, 'Université de Montréal', 6),
-    (14, 'Université McGill', 6),
-    (15, 'Université du Québec à Montréal', 6),
-    (16, 'Université du Québec en Outaouais', 7),
-    (17, 'Université du Québec à Chicoutimi', 8);
-
 /*
 DELIMITER //
 CREATE TRIGGER nouvelle_uni BEFORE INSERT ON Universite FOR EACH ROW
@@ -92,29 +146,6 @@ CREATE TRIGGER nouvelle_uni BEFORE INSERT ON Universite FOR EACH ROW
 DELIMITER ;
 */
 
-/*------------------------------------------------------------------------------------------------------*/
-
--- REGION
-
-CREATE TABLE Region (
-    id_region INTEGER,
-    nom VARCHAR(64),
-
-    PRIMARY KEY (id_region)
-);
-
-
-INSERT INTO Region (id_region, nom) VALUES
-    (1, 'Abitibi-Témiscamingue'),
-    (2, 'Bas-Saint-Laurent'),
-    (3, 'Capitale-Nationale'),
-    (4, 'Estrie'),
-    (5, 'Mauricie'),
-    (6, 'Montréal'),
-    (7, 'Outaouais'),
-    (8, 'Saguenay – Lac-Saint-Jean');
-
-/*------------------------------------------------------------------------------------------------------*/
 
 -- Artiste
 
@@ -232,32 +263,6 @@ INSERT INTO Artiste (id_artiste, nom_artiste, email_artiste, biographie_artiste,
     (98, 'Mia Virtuoso', 'mia.virtuoso@outlook.com', 'Embarking on a virtuoso journey, crafting compositions that showcase technical mastery and expressive brilliance.', 'Montreal', 15),
     (99, 'Liam Serenata', 'liam.serenata@gmail.com', 'Serenading the soul with tranquil melodies, creating compositions that evoke feelings of serenity and peace.', 'Sherbrooke', 6),
     (100, 'Grace Sonante', 'grace.sonante@videotron.ca', 'Crafting sonante compositions that resonate with sound, creating a symphony of harmonious and resonant melodies.', 'Rimouski', 14);
--- ** STYLES A AJOUTER **
-
-/*------------------------------------------------------------------------------------------------------*/
-
--- Styles
-
-CREATE TABLE Styles (
-    id_style INTEGER,
-    nom VARCHAR(32),
-
-    PRIMARY KEY (id_style)
-);
-
-INSERT INTO Styles (id_style, nom) VALUES
-    (1, 'Pop'),
-    (2, 'Rock'),
-    (3, 'Hip Hop'),
-    (4, 'Jazz'),
-    (5, 'Country'),
-    (6, 'Electronique'),
-    (7, 'Classique'),
-    (8, 'Blues'),
-    (9, 'R&B'),
-    (10, 'Reggae');
-
-/*------------------------------------------------------------------------------------------------------*/
 
 -- Merch
 
@@ -386,16 +391,6 @@ CREATE TABLE Chanson (
 INSERT INTO Chanson (id_chanson, id_album, titre, duree) VALUES
     ();
 
-/*------------------------------------------------------------------------------------------------------*/
-
--- Produit
-
-CREATE TABLE Produit (
-    id_produit INTEGER AUTO_INCREMENT,
-    prix REAL,
-
-    PRIMARY KEY (id_produit)
-);
 
 /*------------------------------------------------------------------------------------------------------*/
 

@@ -11,7 +11,6 @@ def getAlbums():
             return rowsAlbum
     finally:
         pass
-        #connection.close()
 
 
 def getArtistes():
@@ -21,7 +20,6 @@ def getArtistes():
             return rowsArtistes
     finally:
         pass
-        #connection.close()
 
 def getUniversite():
     try:
@@ -30,4 +28,4 @@ def getUniversite():
             return rowsUni
     finally:
         pass
-        #connection.close()
+        #cursor.close()

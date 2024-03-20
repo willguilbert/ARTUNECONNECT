@@ -10,4 +10,5 @@ def getArtistes():
             rowsArtiste = cursor.fetchall()
             return rowsArtiste
     finally:
-        connection.close()
+        #cursor.close()
+        pass

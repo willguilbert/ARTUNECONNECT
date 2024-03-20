@@ -24,6 +24,7 @@ def get_album_details(album_title):
                 album_details['chansons'] = chansons
 
     finally:
-        connection.close()
+        #cursor.close()
+        pass
 
     return album_details

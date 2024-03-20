@@ -9,4 +9,4 @@ def getUniversites():
             rowsUniversite = cursor.fetchall()
             return rowsUniversite
     finally:
-        connection.close()
+        cursor.close()

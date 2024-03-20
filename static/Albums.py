@@ -9,4 +9,5 @@ def getAlbums():
             rowsAlbum = cursor.fetchall()
             return rowsAlbum
     finally:
-        connection.close()
+        #cursor.close()
+        pass

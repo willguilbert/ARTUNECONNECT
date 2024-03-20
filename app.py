@@ -5,6 +5,7 @@ import static.Albums
 import static.Artistes
 import static.Universites
 import static.Album
+import static.Artiste
 from database import Database
 
 app = Flask(__name__)

@@ -1,10 +1,12 @@
 from database import Database
 
+
 database = Database()
 connection = database.get_connection()
 cursor = database.get_cursor()
 
 def getArtisteDetails(artiste_nom):
+    
     artiste_details = {}
 
     try:
@@ -40,6 +42,7 @@ def getArtisteDetails(artiste_nom):
                 artiste_details['merch'] = merch
 
     finally:
-        connection.close()
+        #cursor.close()
+        pass
 
     return artiste_details
