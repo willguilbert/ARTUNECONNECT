@@ -1,4 +1,5 @@
 -- Drop FK sur T,N et S
+ALTER TABLE Utilisateur MODIFY mot_de_passe varchar(64);
 ALTER TABLE `Transaction` DROP FOREIGN KEY Transaction_ibfk_2;
 ALTER TABLE Noter DROP FOREIGN KEY Noter_ibfk_1;
 ALTER TABLE Suivre DROP FOREIGN KEY Suivre_ibfk_1;

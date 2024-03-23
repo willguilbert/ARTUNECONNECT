@@ -1,10 +1,64 @@
+
+/*-------------------------------------------DATABASE-------------------------------------------------*/
+
 CREATE DATABASE IF NOT EXISTS ARTUNECONNECT;
 
--- ** STYLES A AJOUTER **
-/*------------------------------------------------------------------------------------------------------*/
+USE ARTUNECONNECT;
+
+/*-------------------------------------------CREATES--------------------------------------------------*/
+
+-- Region
+CREATE TABLE Region (
+    id_region INTEGER,
+    nom VARCHAR(64),
+
+    PRIMARY KEY (id_region)
+);
+
+-- Universite
+CREATE TABLE Universite (
+    id_universite INTEGER,
+    nom VARCHAR(64),
+    id_region INTEGER, -- NOT NULL enlevé, car ON DELETE SET NULL
+    photo VARCHAR(256),
+
+    PRIMARY KEY (id_universite),
+    FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL
+);
+
+-- Utilisateur
+CREATE TABLE Utilisateur (
+    id_utilisateur INTEGER AUTO_INCREMENT,
+    nom VARCHAR(32),
+    prenom VARCHAR(32),
+    email VARCHAR(64),
+    mot_de_passe VARCHAR(32),
+    age INTEGER,
+    -- photo_de_profil VARCHAR(256),
+    bio varchar(1024),
+    liens_reseaux_sociaux VARCHAR(256),
+    id_region INTEGER, -- NOT NULL enlevé, car ON DELETE SET NULL
+
+    PRIMARY KEY (id_utilisateur),
+    FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL,
+    UNIQUE (email)
+);
+
+-- Artiste
+CREATE TABLE Artiste (
+    id_artiste INTEGER,
+    nom_artiste VARCHAR(32),
+    email_artiste VARCHAR(64),
+    biographie_artiste VARCHAR(1024),
+    origine VARCHAR(32),
+    id_universite INTEGER, -- NOT NULL enlevé, car ON DELETE SET NULL
+    photo VARCHAR(256),
+
+    PRIMARY KEY (id_artiste),
+    FOREIGN KEY (id_universite) REFERENCES Universite (id_universite) ON DELETE SET NULL
+);
 
 -- Styles
-
 CREATE TABLE Styles (
     id_style INTEGER,
     nom VARCHAR(32),
@@ -12,6 +66,183 @@ CREATE TABLE Styles (
     PRIMARY KEY (id_style)
 );
 
+-- Produit
+CREATE TABLE Produit (
+    id_produit INTEGER AUTO_INCREMENT,
+    prix REAL,
+
+    PRIMARY KEY (id_produit)
+);
+
+-- Merch
+CREATE TABLE Merch (
+    id_merch INTEGER,
+    id_produit INTEGER DEFAULT NULL, -- null, changé apres le trigger
+    nom_article VARCHAR(32),
+    image_art VARCHAR(256),
+    couleur CHAR(6), -- hexa
+    taille ENUM ('XS', 'S', 'M', 'L', 'XL', 'XXL', 'Standard'),
+    typeArticle ENUM ('T-Shirt', 'Beanie', 'Hoodie'),
+    id_artiste INTEGER NOT NULL,
+    photo VARCHAR(256),
+
+    PRIMARY KEY (id_merch), -- enleve id_produit aussi (Ccomposee) car DEFAULT NULL
+    FOREIGN KEY (id_produit) REFERENCES Produit (id_produit) ON DELETE CASCADE,
+    FOREIGN KEY (id_artiste) REFERENCES Artiste (id_artiste) ON DELETE CASCADE
+);
+
+-- Album
+CREATE TABLE Album (
+    id_album INTEGER,
+    titre VARCHAR(32) NOT NULL,
+    id_artiste INTEGER NOT NULL,
+    id_style INTEGER NOT NULL,
+    id_produit INTEGER DEFAULT NULL, -- null, changé apres le trigger
+    format ENUM ('Numerique', 'Disque', 'Cassette', 'Vinyl'), -- a voir
+    noteglobal REAL,
+    photo_album VARCHAR(32) NOT NULL, -- est ce qu'il est possible de ne pas en avoir
+    annee_parution INTEGER, -- etait DATE, modifie a INTEGER
+    duree REAL DEFAULT 0.0, -- a regarder
+    photo VARCHAR(256),
+
+    PRIMARY KEY(id_album),
+    FOREIGN KEY(id_artiste) REFERENCES Artiste (id_artiste),
+    FOREIGN KEY(id_style) REFERENCES Styles (id_style),
+    FOREIGN KEY(id_produit) REFERENCES Produit (id_produit)
+);
+
+-- Chanson
+CREATE TABLE Chanson (
+    id_chanson INTEGER,
+    id_album INTEGER NOT NULL,
+    titre VARCHAR(32) NOT NULL,
+    duree REAL,
+
+    PRIMARY KEY (id_chanson),
+    FOREIGN KEY (id_album) REFERENCES Album (id_album) ON DELETE CASCADE
+);
+
+-- Transaction
+CREATE TABLE Transaction (
+    id_transaction INTEGER,
+    id_produit INTEGER NOT NULL,
+    id_utilisateur INTEGER NOT  NULL,
+    date_transaction DATE,
+
+    PRIMARY KEY(id_transaction),
+    FOREIGN KEY(id_produit) REFERENCES Produit (id_produit),
+    FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur (id_utilisateur)
+);
+
+-- Noter
+CREATE TABLE Noter (
+    id_utilisateur INTEGER,
+    id_album INTEGER,
+    note INTEGER,
+    review VARCHAR(2056),
+
+    PRIMARY KEY (id_utilisateur, id_album),
+    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur (id_utilisateur),
+    FOREIGN KEY (id_album) REFERENCES Album (id_album),
+    CONSTRAINT CHK_NoterNote CHECK (note >= 1 AND note <=5)
+);
+
+-- Suivre
+CREATE TABLE Suivre (
+    id_utilisateur INTEGER NOT NULL,
+    id_artiste INTEGER NOT NULL,
+
+    PRIMARY KEY (id_utilisateur, id_artiste),
+    FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur (id_utilisateur),
+    FOREIGN KEY(id_artiste) REFERENCES Artiste (id_artiste)
+);
+
+/*------------------------------------------TRIGGERS--------------------------------------------------*/
+
+-- Trigger 1: Ajoute les items de merch à la table produit (auto_increment)
+DELIMITER //
+CREATE TRIGGER ajout_merch_a_produit BEFORE INSERT ON Merch FOR EACH ROW
+
+    BEGIN
+        -- ajoute le produit, avec le prix en fonction de l'item
+        INSERT INTO Produit (prix) VALUES (
+            CASE
+                WHEN NEW.typeArticle = 'T-Shirt' THEN 19.99
+                WHEN NEW.typeArticle = 'Beanie' THEN 14.99
+                WHEN NEW.typeArticle = 'Hoodie' THEN 29.99
+            END );
+
+        -- ajoute le id_produit dans la table merch
+        SET NEW.id_produit = LAST_INSERT_ID();
+
+    END //
+DELIMITER ;
+
+
+-- Trigger 2: Ajoute les items d'album à la table produit (auto_increment)
+DELIMITER //
+CREATE TRIGGER ajout_album_a_produit BEFORE INSERT ON Album FOR EACH ROW
+
+    BEGIN
+        -- ajoute le produit avec le prix pour un album
+        INSERT INTO Produit (prix) VALUES
+            (5.99);
+
+        -- ajoute le id_produit dans la table album
+        SET NEW.id_produit = LAST_INSERT_ID();
+
+    END //
+DELIMITER ;
+
+
+-- Trigger 3: Modifie la note globale d'un album
+DELIMITER //
+CREATE TRIGGER note_globale_album AFTER INSERT ON Noter FOR EACH ROW
+
+    BEGIN
+        DECLARE total_note INTEGER;
+        DECLARE total_votes INTEGER;
+
+        SELECT SUM(note), COUNT(*) INTO total_note, total_votes
+        FROM Noter N WHERE N.id_album = NEW.id_album;
+
+        IF total_votes > 0 THEN
+            UPDATE Album A SET noteglobal = total_note / total_votes
+            WHERE A.id_album = NEW.id_album;
+        ELSE
+            UPDATE Album A SET noteglobal = NULL
+            WHERE A.id_album = NEW.id_album;
+        END IF;
+
+    END //
+DELIMITER ;
+-- revoir le trigger note global si album a 0 notes
+
+
+-- Trigger 4: Modifie la duree totale d'un album
+DELIMITER //
+CREATE TRIGGER duree_album AFTER INSERT ON Chanson FOR EACH ROW
+
+    BEGIN
+        UPDATE Album A SET A.duree = (A.duree + NEW.duree)
+        WHERE NEW.id_album = A.id_album;
+    END //
+DELIMITER ;
+
+
+/*
+-- Trigger 5: Ajoute le album_id aux items chansons lorsque album et chansons sont ajoutés
+    Quand quelqun cree un album et upload donc album + chansons:
+1. tuple chansons sont crees (id_album = NULL)
+2. tuple album est cree
+3. id_album de la chansons est change a LAST_INSERT_...
+*/
+
+-- Trigger 6: Nombre d'artistes dans une université
+
+/*-------------------------------------------INSERTS--------------------------------------------------*/
+
+-- Styles
 INSERT INTO Styles (id_style, nom) VALUES
     (1, 'Pop'),
     (2, 'Rock'),
@@ -24,18 +255,7 @@ INSERT INTO Styles (id_style, nom) VALUES
     (9, 'R&B'),
     (10, 'Reggae');
 
-/*------------------------------------------------------------------------------------------------------*/
-
--- REGION
-
-CREATE TABLE Region (
-    id_region INTEGER,
-    nom VARCHAR(64),
-
-    PRIMARY KEY (id_region)
-);
-
-
+-- Region
 INSERT INTO Region (id_region, nom) VALUES
     (1, 'Abitibi-Témiscamingue'),
     (2, 'Bas-Saint-Laurent'),
@@ -46,122 +266,27 @@ INSERT INTO Region (id_region, nom) VALUES
     (7, 'Outaouais'),
     (8, 'Saguenay – Lac-Saint-Jean');
 
-/*------------------------------------------------------------------------------------------------------*/
--- Produit
+-- Universite
+INSERT INTO Universite (id_universite, nom, id_region, photo) VALUES
+    (1, 'Université du Québec en Abitibi-Témiscamingue', 1, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteAbitibi.jpg'),
+    (2, 'Université du Québec à Rimouski', 2, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteRimouski.jpg'),
+    (3, 'École nationale d’administration publique', 3, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/administrationPublique.jpg'),
+    (4, 'Institut national de la recherche scientifique', 3, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/rechercheScientifique.jpg'),
+    (5, 'Université Laval', 3, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteLaval.jpg'),
+    (6, 'Université Bishop’s', 4, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/bishupUniversity.jpg'),
+    (7, 'Université de Sherbrooke', 4, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteSherbrooke.jpg'),
+    (8, 'Université du Québec à Trois-Rivières', 5, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteTroisRiviere.jpg'),
+    (9, 'École des hautes études commerciales de Montréal', 6, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/hecMontreal.jpg'),
+    (10, 'École de technologie supérieure', 6, 'https://artuneconnectimgs.s3.us-east2.amazonaws.com/UniImgs/universiteTechnologieSuperieure.jpg'),
+    (11, 'Polytechnique Montréal', 6, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/polytechniqueMontreal.jpg'),
+    (12, 'Université Concordia', 6, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/concordiaUniversity.jpg'),
+    (13, 'Université de Montréal', 6, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteMontreal.jpg'),
+    (14, 'Université McGill', 6, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/mcgillUniversity.jpg'),
+    (15, 'Université du Québec à Montréal', 6, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteUQAM.jpg'),
+    (16, 'Université du Québec en Outaouais', 7, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteOutaouais.jpg'),
+    (17, 'Université du Québec à Chicoutimi', 8, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteChicoutimi.jpg');
 
-CREATE TABLE Produit (
-    id_produit INTEGER AUTO_INCREMENT,
-    prix REAL,
-
-    PRIMARY KEY (id_produit)
-);
-/*------------------------------------------------------------------------------------------------------*/
-
--- UNIVERSITE
-
-CREATE TABLE Universite (
-    id_universite INTEGER,
-    nom VARCHAR(64),
-    id_region INTEGER, -- NOT NULL enlevé, car ON DELETE SET NULL
-
-    PRIMARY KEY (id_universite),
-    FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL
-);
-
-
-INSERT INTO Universite (id_universite, nom, id_region) VALUES
-    (1, 'Université du Québec en Abitibi-Témiscamingue', 1),
-    (2, 'Université du Québec à Rimouski', 2),
-    (3, 'École nationale d’administration publique', 3),
-    (4, 'Institut national de la recherche scientifique', 3),
-    (5, 'Université Laval', 3),
-    (6, 'Université Bishop’s', 4),
-    (7, 'Université de Sherbrooke', 4),
-    (8, 'Université du Québec à Trois-Rivières', 5),
-    (9, 'École des hautes études commerciales de Montréal', 6),
-    (10, 'École de technologie supérieure', 6),
-    (11, 'Polytechnique Montréal', 6),
-    (12, 'Université Concordia', 6),
-    (13, 'Université de Montréal', 6),
-    (14, 'Université McGill', 6),
-    (15, 'Université du Québec à Montréal', 6),
-    (16, 'Université du Québec en Outaouais', 7),
-    (17, 'Université du Québec à Chicoutimi', 8);
-
-
-CREATE TABLE Utilisateur (
-    id_utilisateur INTEGER,
-    -- nom_utilisateur VARCHAR(16),
-    nom VARCHAR(32),
-    prenom VARCHAR(32),
-    email VARCHAR(64),
-    mot_de_passe VARCHAR(32),
-    age INTEGER,
-    photo_de_profil VARCHAR(256),
-    bio varchar(1024),
-    liens_reseaux_sociaux VARCHAR(256),
-    id_region INTEGER, -- NOT NULL enlevé, car ON DELETE SET NULL
-
-    PRIMARY KEY (id_utilisateur),
-    FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL,
-    UNIQUE (email)
-);
-
-/*
-
-SI EMAIL EST UNIQUE(), HANDLER VA SEN OCCUPER COTE SERVEUR
-
-DELIMITER //
-CREATE TRIGGER utilisateur_existe_deja BEFORE INSERT ON Utilisateur FOR EACH ROW
-    BEGIN
-        IF (
-            (SELECT COUNT(*) FROM Utilisateur U WHERE U.email = new.email
-            AND U.mot_de_passe = new.mot_de_passe) <> 0
-            OR
-            (SELECT COUNT(*) FROM Utilisateur U WHERE U.nom_utilisateur = new.nom_utilisateur
-            AND U.mot_de_passe = new.mot_de_passe) <> 0
-        ) THEN
-            -- a modifier
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Le compte existe déja.';
-            -- rediriger vers log-in (serveur)
-        -- else a ajouter?
-
-        end if ;
-    end //
-
-DELIMITER ;
-
-*/
-/*
-DELIMITER //
-CREATE TRIGGER nouvelle_uni BEFORE INSERT ON Universite FOR EACH ROW
-
-    BEGIN
-        IF new.id_region NOT IN (SELECT id_region FROM Region) THEN
-            INSERT INTO Region VALUES (
-                new.id_region, IDK
-                );
-        end if ;
-    end //
-DELIMITER ;
-*/
-
-
--- Artiste
-
-CREATE TABLE Artiste (
-    id_artiste INTEGER,
-    nom_artiste VARCHAR(32),
-    email_artiste VARCHAR(64),
-    biographie_artiste VARCHAR(1024),
-    origine VARCHAR(32),
-    id_universite INTEGER, -- NOT NULL enlevé, car ON DELETE SET NULL
-    -- STYLES SOIT FOREIGN KEY OU ATTRIBUT COMPOSÉ
-
-    PRIMARY KEY (id_artiste),
-    FOREIGN KEY (id_universite) REFERENCES Universite (id_universite) ON DELETE SET NULL
-);
-
+-- Artiste (AJOUTER PHOTO)
 INSERT INTO Artiste (id_artiste, nom_artiste, email_artiste, biographie_artiste, origine, id_universite) VALUES
     (1, 'Emily Serenade', 'emily.serenade@gmail.com', 'Crafting enchanting serenades that linger in the heart like a sweet melody.', 'Fredericton', 5),
     (2, 'Marcus Melody', 'marcus.melody@outlook.com', 'Embarking on a musical journey, weaving diverse melodies into a harmonious symphony.', 'Montreal', 13),
@@ -264,228 +389,14 @@ INSERT INTO Artiste (id_artiste, nom_artiste, email_artiste, biographie_artiste,
     (99, 'Liam Serenata', 'liam.serenata@gmail.com', 'Serenading the soul with tranquil melodies, creating compositions that evoke feelings of serenity and peace.', 'Sherbrooke', 6),
     (100, 'Grace Sonante', 'grace.sonante@videotron.ca', 'Crafting sonante compositions that resonate with sound, creating a symphony of harmonious and resonant melodies.', 'Rimouski', 14);
 
--- Merch
-
-CREATE TABLE Merch (
-    id_merch INTEGER,
-    id_produit INTEGER DEFAULT NULL, -- null, changé apres le trigger
-    nom_article VARCHAR(32),
-    image_art VARCHAR(256),
-    couleur CHAR(6), -- hexa
-    taille ENUM ('XS', 'S', 'M', 'L', 'XL', 'XXL', 'Standard'),
-    typeArticle ENUM ('T-Shirt', 'Beanie', 'Hoodie'),
-    id_artiste INTEGER NOT NULL,
-
-    PRIMARY KEY (id_merch), -- enleve id_produit aussi (Ccomposee) car DEFAULT NULL
-    FOREIGN KEY (id_produit) REFERENCES Produit (id_produit) ON DELETE CASCADE,
-    FOREIGN KEY (id_artiste) REFERENCES Artiste (id_artiste) ON DELETE CASCADE
-);
-
-
-DELIMITER //
-CREATE TRIGGER ajout_merch_a_produit BEFORE INSERT ON Merch FOR EACH ROW
--- ajoute le nouvel merch a la table produit, lui donne un prix et ajoute le product_id au merch
-
-    BEGIN
-        -- ajoute le produit, avec le prix en fonction de l'item
-        INSERT INTO Produit (prix) VALUES (
-            CASE
-                WHEN NEW.typeArticle = 'T-Shirt' THEN 19.99
-                WHEN NEW.typeArticle = 'Beanie' THEN 14.99
-                WHEN NEW.typeArticle = 'Hoodie' THEN 29.99
-                -- ELSE NULL? pas necessaire si tous les merch sont 1 des 3 types
-            END );
-
-        -- ajoute le id_produit au merch
-        SET NEW.id_produit = LAST_INSERT_ID();
-
-    END //
-DELIMITER ;
-
-/*------------------------------------------------------------------------------------------------------*/
-
--- Album
-
-CREATE TABLE Album (
-    id_album INTEGER,
-    titre VARCHAR(32) NOT NULL,
-    id_artiste INTEGER NOT NULL,
-    id_style INTEGER NOT NULL,
-    id_produit INTEGER DEFAULT NULL, -- null, changé apres le trigger
-    format ENUM ('Numerique', 'Disque', 'Cassette', 'Vinyl'), -- a voir
-    noteglobal REAL,
-    photo_album VARCHAR(32) NOT NULL, -- est ce qu'il est possible de ne pas en avoir
-    annee_parution INTEGER, -- etait DATE, modifie a INTEGER
-    duree REAL DEFAULT 0.0, -- a regarder
-
-    PRIMARY KEY(id_album),
-    FOREIGN KEY(id_artiste) REFERENCES Artiste (id_artiste),
-    FOREIGN KEY(id_style) REFERENCES Styles (id_style),
-    FOREIGN KEY(id_produit) REFERENCES Produit (id_produit)
-);
-
-
-DELIMITER //
-CREATE TRIGGER ajout_album_a_produit BEFORE INSERT ON Album FOR EACH ROW
--- ajoute le nouvel album a la table produit, lui donne un prix et ajoute le product_id a l'album
-
-    BEGIN
-        -- ajoute le produit avec le prix pour un album
-        INSERT INTO Produit (prix) VALUES
-            (5.99);
-
-        -- ajoute le id_produit a l'album
-        SET NEW.id_produit = LAST_INSERT_ID();
-
-    END //
-DELIMITER ;
-
-
-DELIMITER //
-CREATE TRIGGER note_globale_album AFTER INSERT ON Noter FOR EACH ROW
--- modifie la note globale de l'album lorsqu'une nouvelle note lui est donnee
-
-    BEGIN
-        DECLARE total_note INTEGER;
-        DECLARE total_votes INTEGER;
-
-        SELECT SUM(note), COUNT(*) INTO total_note, total_votes
-        FROM Noter N WHERE N.id_album = NEW.id_album;
-
-        IF total_votes > 0 THEN
-            UPDATE Album A SET noteglobal = total_note / total_votes
-            WHERE A.id_album = NEW.id_album;
-        ELSE
-            UPDATE Album A SET noteglobal = NULL
-            WHERE A.id_album = NEW.id_album;
-        END IF;
-
-    END //
-DELIMITER ;
-
-
-DELIMITER //
-CREATE TRIGGER duree_album AFTER INSERT ON Chanson FOR EACH ROW
--- modifie la duree totale de l'album lorsque les chansons sont ajoutes dans l'album
-
-    BEGIN
-        UPDATE Album A SET A.duree = (A.duree + NEW.duree)
-        WHERE NEW.id_album = A.id_album;
-    END //
-DELIMITER ;
-
-/*------------------------------------------------------------------------------------------------------*/
-
 -- Chanson
-
-CREATE TABLE Chanson (
-    id_chanson INTEGER,
-    id_album INTEGER NOT NULL,
-    titre VARCHAR(32) NOT NULL,
-    duree REAL,
-
-    PRIMARY KEY (id_chanson),
-    FOREIGN KEY (id_album) REFERENCES Album (id_album) ON DELETE CASCADE
-);
-
 INSERT INTO Chanson (id_chanson, id_album, titre, duree) VALUES
     ();
 
+-- Album (AJOUTER PHOTO - 142)
+INSERT INTO Album (id_album, titre, id_artiste, id_style, format, noteglobal, photo_album, annee_parution) VALUES
+    ();
 
-/*------------------------------------------------------------------------------------------------------*/
-
--- Transaction
-
-CREATE TABLE Transaction (
-    id_transaction INTEGER,
-    id_produit INTEGER NOT NULL,
-    id_utilisateur INTEGER NOT  NULL,
-    date_transaction DATE,
-
-    PRIMARY KEY(id_transaction),
-    FOREIGN KEY(id_produit) REFERENCES Produit (id_produit),
-    FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur (id_utilisateur)
-);
-
-/*------------------------------------------------------------------------------------------------------*/
-
--- Noter
-
-CREATE TABLE Noter (
-    id_utilisateur INTEGER,
-    id_album INTEGER,
-    note INTEGER,
-    review VARCHAR(2056),
-
-    PRIMARY KEY (id_utilisateur, id_album),
-    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur (id_utilisateur),
-    FOREIGN KEY (id_album) REFERENCES Album (id_album),
-    CONSTRAINT CHK_NoterNote CHECK (note >= 1 AND note <=5)
-);
-
-/*------------------------------------------------------------------------------------------------------*/
-
--- Suivre
-
-CREATE TABLE Suivre (
-    id_utilisateur INTEGER NOT NULL,
-    id_artiste INTEGER NOT NULL,
-
-    PRIMARY KEY (id_utilisateur, id_artiste),
-    FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur (id_utilisateur),
-    FOREIGN KEY(id_artiste) REFERENCES Artiste (id_artiste)
-);
-
-/*------------------------------------------------------------------------------------------------------*/
-
-/*
-
-MODIFICATIONS
--utilisateurs: UNIQUE(nom_utilisateur, mot_de_passe) et (email, mdp) - pas necessaire si trigger
--localisation: au lieu de localisation avec attribut region, region avec attribut nom?
--mettre les primary keys en INTEGER au lieu de en Varchar(32)
-
-- ON DELETE SET NULL au lieu de SET DEFAULT NULL
--origine d'un artiste ne reference pas une region (ex. un artiste peut venir des etats-unis)
-    alors que region = regions aux quebec
-
--artiste: style est rendu l'attribut style principal, c'est plus simple qu'un attribut composé car ca
-    devient une foreign key
-
-
-TRIGGERS
-1. trigger de creation d'un compte (email et mdp existent deja)\
-2. lorsque une merch se fait ajouter, l'ajouter dans la table produit
-3. lorsque un album, l'ajouter dans la table produit
-4. note globale album
-5. duree totale album
-
-*quand quelqun cree un album et upload donc album + chansons:
-1. tuple chansons sont crees (id_album = NULL)
-2. tuple album est cree
-3. id_album de la chansons est change a LAST_INSERT_...
-
-*si une universite se cree, et elle n'est pas dans une region qui existe, creer cette region dans la table region
-
-
-PRIX ARTICLES MERCH
--- album = 5.99 prix
--- t.shirt = 19.99 prix
--- beanie = 14.99 prix
--- hoodie = 29.99 prix
-
-
-NOTES
--log in seulement avec email et mdp (pas besoin de nom utilisateur)
--changer STYLE dans le sql, trigger qui va chercher les styles des albums, ON INSERT ON Album
--revoir le trigger note global si album a 0 notes
-
-
-**** CHANGER LES PRIMARY KEYS EN INT *****
-
-
-
-*/
-
-
-
+-- Merch (AJOUTER PHOTO)
+INSERT INTO Merch (id_merch, id_produit, nom_article, image_art, couleur, taille, typeArticle, id_artiste, photo) VALUES
+    ();
