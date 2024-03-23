@@ -32,7 +32,8 @@ def main():
     rowsUniversite = Home.getUniversite()
     return render_template('Home.html', rowsAlbum=rowsAlbums, rowsArtistes=rowsArtistes, rowsUniversite=rowsUniversite)
 
-
+# Vous devez setter dans votre .env un SECRET_KEY=XXXX ou XXX est ce que vous désirez. C'est seulement
+#pour faire fonctionner le tout, ça prends une secret key.
 @app.route("/login", methods=['GET', 'POST'])
 def login():
     msg = ''

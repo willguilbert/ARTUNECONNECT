@@ -54,6 +54,7 @@ CREATE TABLE Artiste (
     FOREIGN KEY (id_universite) REFERENCES Universite (id_universite) ON DELETE SET NULL
 );
 
+
 CREATE TABLE Styles (
     id_style INTEGER,
     nom VARCHAR(32),
@@ -222,7 +223,7 @@ INSERT INTO Album (id_album, titre, id_artiste, id_style, id_produit, format,
     (18, 'Eternal Atake', 3, 3, 8, 'Numerique', 2.2, null, 2024, 35.20),
     (19, 'Donda', 3, 4, 9, 'Numerique', 3.6, null, 2006, 2.22),
     (20, 'UTOPIA', 5, 5, 10, 'Numerique', 4.4, null, 1999, 1);
-
+SELECT * FROM album;
 ALTER TABLE Album ADD COLUMN photo VARCHAR(255);
 UPDATE Album SET photo = 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/a1.webp' WHERE  id_album=1;
 UPDATE Album SET photo = 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/a10.webp' WHERE id_album=2;
