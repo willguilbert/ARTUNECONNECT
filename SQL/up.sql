@@ -1,5 +1,3 @@
--- test
-
 /*-------------------------------------------DATABASE-------------------------------------------------*/
 
 CREATE DATABASE IF NOT EXISTS ARTUNECONNECT;
@@ -33,7 +31,7 @@ CREATE TABLE Utilisateur (
     nom VARCHAR(32),
     prenom VARCHAR(32),
     email VARCHAR(64),
-    mot_de_passe VARCHAR(32),
+    mot_de_passe VARCHAR(64),
     age INTEGER,
     -- photo_de_profil VARCHAR(256),
     bio varchar(1024),
@@ -241,20 +239,9 @@ DELIMITER ;
 
 -- Trigger 6: Nombre d'artistes dans une université
 
-/*-------------------------------------------INSERTS--------------------------------------------------*/
+-- Trigger 7: Nombre de followers d'un artiste
 
--- Styles
-INSERT INTO Styles (id_style, nom) VALUES
-    (1, 'Pop'),
-    (2, 'Rock'),
-    (3, 'Hip Hop'),
-    (4, 'Jazz'),
-    (5, 'Country'),
-    (6, 'Electronique'),
-    (7, 'Classique'),
-    (8, 'Blues'),
-    (9, 'R&B'),
-    (10, 'Reggae');
+/*-------------------------------------------INSERTS--------------------------------------------------*/
 
 -- Region
 INSERT INTO Region (id_region, nom) VALUES
@@ -286,6 +273,8 @@ INSERT INTO Universite (id_universite, nom, id_region, photo) VALUES
     (15, 'Université du Québec à Montréal', 6, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteUQAM.jpg'),
     (16, 'Université du Québec en Outaouais', 7, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteOutaouais.jpg'),
     (17, 'Université du Québec à Chicoutimi', 8, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteChicoutimi.jpg');
+
+-- Utilisateur (aucunes données initiales)
 
 -- Artiste (AJOUTER PHOTO)
 INSERT INTO Artiste (id_artiste, nom_artiste, email_artiste, biographie_artiste, origine, id_universite) VALUES
@@ -390,14 +379,35 @@ INSERT INTO Artiste (id_artiste, nom_artiste, email_artiste, biographie_artiste,
     (99, 'Liam Serenata', 'liam.serenata@gmail.com', 'Serenading the soul with tranquil melodies, creating compositions that evoke feelings of serenity and peace.', 'Sherbrooke', 6),
     (100, 'Grace Sonante', 'grace.sonante@videotron.ca', 'Crafting sonante compositions that resonate with sound, creating a symphony of harmonious and resonant melodies.', 'Rimouski', 14);
 
--- Chanson
-INSERT INTO Chanson (id_chanson, id_album, titre, duree) VALUES
+-- Styles
+INSERT INTO Styles (id_style, nom) VALUES
+    (1, 'Pop'),
+    (2, 'Rock'),
+    (3, 'Hip Hop'),
+    (4, 'Jazz'),
+    (5, 'Country'),
+    (6, 'Electronique'),
+    (7, 'Classique'),
+    (8, 'Blues'),
+    (9, 'R&B'),
+    (10, 'Reggae');
+
+-- Produit (aucunes données initiales)
+
+-- Merch (AJOUTER PHOTO)
+INSERT INTO Merch (id_merch, id_produit, nom_article, image_art, couleur, taille, typeArticle, id_artiste, photo) VALUES
     ();
 
 -- Album (AJOUTER PHOTO - 142)
 INSERT INTO Album (id_album, titre, id_artiste, id_style, format, noteglobal, photo_album, annee_parution) VALUES
     ();
 
--- Merch (AJOUTER PHOTO)
-INSERT INTO Merch (id_merch, id_produit, nom_article, image_art, couleur, taille, typeArticle, id_artiste, photo) VALUES
+-- Chanson
+INSERT INTO Chanson (id_chanson, id_album, titre, duree) VALUES
     ();
+
+-- Transaction (aucunes données initiales)
+
+-- Noter (aucunes données initiales)
+
+-- Suivre (aucunes données initiales)
