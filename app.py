@@ -5,11 +5,20 @@ import pymysql, pymysql.cursors
 
 
 app = Flask(__name__)
-UserProfile = {}
+
+# @app.route('/', methods=['GET', 'POST'])
+# def home():
+#
+#         return render_template('rating.html')
+#
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+
 
 @app.route('/')
 def main():  # put application's code here
-    return render_template('Home.html')
+    return render_template('login.html')
 
 @app.route("/login", methods=['GET','POST'])
 def login():
@@ -46,7 +55,9 @@ def login():
         return render_template('Login.html', message="Invalid username or password")
     else:
         return render_template('Login.html')
-
+@app.route('/navCox')
+def navCox():
+    return render_template('navCox.html')
 @app.route('/albums')
 def albums():
     return render_template('Albums.html')
@@ -56,7 +67,7 @@ def merch():
 
 @app.route('/universities')
 def universities():
-    return render_template('Universities.html')
+     return render_template('Universities.html')
 
 
 if __name__ == '__main__':
