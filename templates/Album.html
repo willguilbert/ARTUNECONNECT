@@ -1,0 +1,72 @@
+{% extends 'NavBar.html' %}
+{% block head %}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+{% endblock %}
+{% block content %}
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-4">
+                <img src="{{ album['album']['photo'] }}" class="img-fluid mb-3" alt="Album">
+            </div>
+            <div class="col-md-8">
+                <h2>{{ album['album']['titre'] }}</h2>
+                <a href="{{ url_for('artiste', artiste_nom=album['artiste']['nom_artiste']) }}"  class="text-dark"><p>{{ album['artiste']['nom_artiste'] }}</p></a>
+
+                <button class="btn btn-outline-secondary" disabled>#{{ album['style'] }}</button>
+                <div>
+                    <span>Duree : </span><span>{{ album['album']['duree'] }}</span><span> minutes</span>
+                </div>
+                <div>
+                    <span>Annee parution : </span><span>{{ album['album']['annee_parution'] }}</span>
+                </div>
+                {% if album and album['album']['noteglobal'] %}
+                    <div class="star-rating">
+                        {% for i in range(1, 6) %}
+                            {% if i <= album['album']['noteglobal'] %}
+                                <span class="fas fa-star checked"></span>
+                            {% else %}
+                                <span class="far fa-star"></span>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+
+                <a href="#" class="btn btn-outline-primary mt-3 me-2"><i class="fa fa-dollar-sign"></i>Buy Now!</a>
+            </div>
+            <div class="col-6 text-end">
+                <a class="btn btn-primary mt-3">Suivre artiste</a>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <a href="https://www.spotify.com" class="btn btn-success mt-3"><i class="fa fa-play-circle"></i>Play
+                        on Spotify</a>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <ol class="list-group list-group-numbered list-group-flush mt-3">
+                            {% if album['chansons'] %}
+                                {% for chanson in album['chansons'] %}
+                                    <li class="list-group-item">{{ chanson['titre'] }}</li>
+                                {% endfor %}
+                            {% endif %}
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+
+    </script>
+
+{% endblock %}
