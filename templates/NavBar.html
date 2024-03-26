@@ -20,12 +20,14 @@
     <nav>
       <div class="navTop">
         <div class="navItem">
-          <img
-            src="{{ url_for('static', filename='LogoArtTune.png') }}"
-            width="106"
-            height="64"
-            alt="ArtTune Logo"
-          />
+          <a href="{{url_for('main')}}">
+            <img
+              src="{{ url_for('static', filename='LogoArtTune.png') }}"
+              width="106"
+              height="64"
+              alt="ArtTune Logo"
+            />
+          </a>
         </div>
         <div class="navItem">
           <div class="search">
@@ -44,10 +46,14 @@
           </div>
         </div>
         <div class="navItem">
-          <button id="btnConnexion" class="btn btn-primary">Connexion</button>
-          <button id="btnInscription" class="btn btn-secondary">
-            Inscription
-          </button>
+          <a href="{{url_for('login')}}">
+            <button id="btnConnexion" class="btn btn-primary">Connexion</button>
+          </a>
+          <a href="{{url_for('register')}}">
+            <button id="btnInscription" class="btn btn-secondary">
+              Inscription
+            </button>
+          </a>
         </div>
       </div>
 

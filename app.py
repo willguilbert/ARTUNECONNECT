@@ -122,10 +122,11 @@ def navCox():
     return render_template('Register.html', msg=msg)
 
 
-@app.route('/albums')
+@app.route('/albums',  methods=['GET', 'POST'])
 def albums():
     albums = static.Albums.getAlbums()
-    return render_template('Albums.html', albums=albums)
+    categories = static.Albums.getCategories()
+    return render_template('Albums.html', albums=albums, categories = categories)
 
 
 @app.route('/merch')
