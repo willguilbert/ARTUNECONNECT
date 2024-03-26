@@ -22,6 +22,7 @@ def get_album_details(album_title):
                 cursor.execute("SELECT * FROM Chanson WHERE id_album = %s", (album['id_album'],))
                 chansons = cursor.fetchall()
                 album_details['chansons'] = chansons
+                
 
     finally:
         #cursor.close()
