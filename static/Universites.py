@@ -9,4 +9,5 @@ def getUniversites():
             rowsUniversite = cursor.fetchall()
             return rowsUniversite
     finally:
-        cursor.close()
+       # cursor.close()
+        pass

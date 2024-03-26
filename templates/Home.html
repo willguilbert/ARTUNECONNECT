@@ -10,7 +10,7 @@
         {% for album in rowsAlbum %}
             <a href="{{ url_for('album', album_titre=album.titre) }}">
                 <div class="card">
-                    <img src="/static/banner.jpeg" alt="Card 1 Image">
+                    <img src="{{ album.photo_album }}" alt="Card 1 Image">
                     <h4 class="card-title">{{ album.titre }} </h4>
                     <div class="tags">
                         <div class="tag">{{ album.duree }}</div>
@@ -31,7 +31,7 @@
         {% for artiste in rowsArtistes %}
             <a href="{{ url_for('artiste', artiste_nom=artiste.nom_artiste) }}">
                 <div class="card">
-                    <img src="/static/banner.jpeg" alt="Card 1 Image">
+                    <img src="{{ artiste.photo_artiste}}" alt="Card 1 Image">
                     <h4 class="card-title">{{ artiste.nom_artiste }} </h4>
                     <div class="tags">
                         <div class="tag">{{ artiste.origine }}</div>
@@ -50,7 +50,7 @@
     <div class="horizontal-scroll-container">
         {% for uni in rowsUniversite %}
             <div class="card">
-                <img src="/static/banner.jpeg" alt="Card 1 Image">
+                <img src="{{ uni.photo_universite }}" alt="Card 1 Image">
                 <h4 class="card-title">{{ uni.nom }} </h4>
                 <div class="tags">
                     <div class="tag">{{ uni.id_region }}</div>
@@ -63,12 +63,7 @@
     </button>
 
     <script>
-        /*
-          function scrollContainer(amount) {
-          const container = document.querySelector(".horizontal-scroll-container");
-          container.scrollLeft += amount;
-        }*/
-    </script>
+</script>
 {% endblock %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"

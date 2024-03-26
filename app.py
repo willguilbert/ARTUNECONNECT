@@ -19,26 +19,11 @@ connection = database.get_connection()
 cursor = database.get_cursor()
 
 app = Flask(__name__)
-
-# @app.route('/', methods=['GET', 'POST'])
-# def home():
-#
-#         return render_template('rating.html')
-#
-# if __name__ == '__main__':
-#     app.run(debug=True)
-
-
 app.secret_key = os.environ.get('SECRET_KEY')
-UserProfile = {}
-
 database = Database()
 
 
 @app.route('/')
-def main():  # put application's code here
-    return render_template('login.html')
-
 def main():
     rowsAlbums = Home.getAlbums()
     rowsArtistes = Home.getArtistes()
@@ -77,6 +62,7 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('login'))
 
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     msg = ''
@@ -103,18 +89,7 @@ def register():
     elif request.method == 'POST':
         msg = 'Please fill out the form!'
 
-        global UserProfile
-        UserProfile['username'] = username
-        UserProfile['email'] = info[2]
-        UserProfile['ville']= info[3]
-        UserProfile['bio']= info[4]
-        UserProfile['telephone']= info[5]
-        UserProfile['prenom']=info[7]
-        UserProfile['nom']= info[8]
-        UserProfile['rating'] = info[6]
-        return render_template('Userpage.html', profile=UserProfile)
-    return render_template('Login.html', message="Invalid username or password")
-
+    return render_template('Register.html', msg=msg)
 @app.route('/navCox')
 def navCox():
     return render_template('navCox.html')
@@ -136,9 +111,6 @@ def merch():
 
 @app.route('/universities')
 def universities():
-
-     #return render_template('Universities.html')
-
      universites = static.Universites.getUniversites()
      return render_template('Universites.html', universites=universites)
 
