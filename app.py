@@ -136,7 +136,7 @@ def merch():
 @app.route('/universities')
 def universities():
 
-     return render_template('Universities.html')
+     #return render_template('Universities.html')
 
      universites = static.Universites.getUniversites()
      return render_template('Universites.html', universites=universites)
