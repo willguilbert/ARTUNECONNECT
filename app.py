@@ -19,6 +19,16 @@ connection = database.get_connection()
 cursor = database.get_cursor()
 
 app = Flask(__name__)
+
+# @app.route('/', methods=['GET', 'POST'])
+# def home():
+#
+#         return render_template('rating.html')
+#
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+
 app.secret_key = os.environ.get('SECRET_KEY')
 UserProfile = {}
 
@@ -26,11 +36,15 @@ database = Database()
 
 
 @app.route('/')
+def main():  # put application's code here
+    return render_template('login.html')
+
 def main():
     rowsAlbums = Home.getAlbums()
     rowsArtistes = Home.getArtistes()
     rowsUniversite = Home.getUniversite()
     return render_template('Home.html', rowsAlbum=rowsAlbums, rowsArtistes=rowsArtistes, rowsUniversite=rowsUniversite)
+
 
 # Vous devez setter dans votre .env un SECRET_KEY=XXXX ou XXX est ce que vous désirez. C'est seulement
 #pour faire fonctionner le tout, ça prends une secret key.
@@ -89,7 +103,24 @@ def register():
     elif request.method == 'POST':
         msg = 'Please fill out the form!'
 
+        global UserProfile
+        UserProfile['username'] = username
+        UserProfile['email'] = info[2]
+        UserProfile['ville']= info[3]
+        UserProfile['bio']= info[4]
+        UserProfile['telephone']= info[5]
+        UserProfile['prenom']=info[7]
+        UserProfile['nom']= info[8]
+        UserProfile['rating'] = info[6]
+        return render_template('Userpage.html', profile=UserProfile)
+    return render_template('Login.html', message="Invalid username or password")
+
+@app.route('/navCox')
+def navCox():
+    return render_template('navCox.html')
+
     return render_template('Register.html', msg=msg)
+
 
 @app.route('/albums')
 def albums():
@@ -104,8 +135,11 @@ def merch():
 
 @app.route('/universities')
 def universities():
-    universites = static.Universites.getUniversites()
-    return render_template('Universites.html', universites=universites)
+
+     return render_template('Universities.html')
+
+     universites = static.Universites.getUniversites()
+     return render_template('Universites.html', universites=universites)
 
 
 @app.route('/artistes')
@@ -124,6 +158,7 @@ def album(album_titre):
 def artiste(artiste_nom):
     artiste = static.Artiste.getArtisteDetails(artiste_nom)
     return render_template('Artiste.html', artiste=artiste)
+
 
 
 if __name__ == '__main__':
