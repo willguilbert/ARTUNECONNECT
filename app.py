@@ -8,6 +8,7 @@ import static.Artistes
 import static.Universites
 import static.Album
 import static.Artiste
+import static.Merchs
 from database import Database
 import re
 import bcrypt
@@ -104,9 +105,10 @@ def albums():
     return render_template('Albums.html', albums=albums, categories = categories)
 
 
-@app.route('/merch')
-def merch():
-    return render_template('Merch.html')
+@app.route('/merch', methods=['GET', 'POST'])
+def merchs():
+    merchs = static.Merchs.getMerchs()
+    return render_template('Merch.html', merchs=merchs)
 
 
 @app.route('/universities')

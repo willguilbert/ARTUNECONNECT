@@ -29,7 +29,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <img src="artist-image.jpg" class="img-fluid rounded" alt="IMG HERE">
+                <img src="{{ artiste['artiste']['photo_artiste'] }}" class="img-fluid rounded" alt="IMG HERE">
             </div>
         </div>
         <h2 class="mb-4 pt-5">Albums</h2>
@@ -79,7 +79,7 @@
             {% for merch in artiste['merch'] %}
                 <div class="col-md-4 col-sm-6 mb-3">
                     <div class="card h-100 text-center">
-                        <img src="{{ merch['image_art'] }}" class="card-img-top p-2"
+                        <img src="{{ merch['photo_merch'] }}" class="card-img-top p-2"
                              alt="img{{ merch['nom_article'] }}">
                         <div class="card-body">
                             <h5 class="card-title">{{ merch['nom_article'] }}</h5>

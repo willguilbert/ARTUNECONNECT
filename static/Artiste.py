@@ -33,7 +33,7 @@ def getArtisteDetails(artiste_nom):
                     'format': album['format'],
                     'noteglobal': album['noteglobal'],
                     'photo_album': album['photo_album'],
-                    'photo' : album['photo']
+
                 } for album in albums]
 
                 # Fetch the merchandise related to the artist

@@ -15,6 +15,7 @@
 
 /*-------------------------------------------DATABASE-------------------------------------------------*/
 
+
 CREATE DATABASE IF NOT EXISTS ARTUNECONNECT;
 
 USE ARTUNECONNECT;
