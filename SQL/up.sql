@@ -242,7 +242,7 @@ DELIMITER //
 CREATE TRIGGER duree_album_insert AFTER INSERT ON Chanson FOR EACH ROW
 
     BEGIN
-        UPDATE Album A SET A.duree = (A.duree + NEW.duree)
+        UPDATE Album A SET A.duree = ROUND((A.duree + NEW.duree),2)
         WHERE NEW.id_album = A.id_album;
     END //
 DELIMITER ;
@@ -252,7 +252,7 @@ DELIMITER //
 CREATE TRIGGER duree_album_delete AFTER DELETE ON Chanson FOR EACH ROW
 
     BEGIN
-        UPDATE Album A SET A.duree = (A.duree - OLD.duree)
+        UPDATE Album A SET A.duree = ROUND((A.duree - OLD.duree),2)
         WHERE OLD.id_album = A.id_album;
     END //
 DELIMITER ;
