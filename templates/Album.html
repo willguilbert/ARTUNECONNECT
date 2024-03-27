@@ -18,7 +18,7 @@
 
                 <button class="btn btn-outline-secondary" disabled>#{{ album['style'] }}</button>
                 <div>
-                    <span>Duree : </span><span>{{ album['album']['duree'] }}</span><span> minutes</span>
+                    <span>Duree : </span><span class="album-duration">{{ album['album']['duree'] }}</span><span> minutes</span>
                 </div>
                 <div>
                     <span>Annee parution : </span><span>{{ album['album']['annee_parution'] }}</span>
@@ -68,5 +68,6 @@
             integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
 
     </script>
+<script src="../static/FormatDuration.js"></script>
 
 {% endblock %}
