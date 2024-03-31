@@ -14,10 +14,11 @@
     {% for universite in universites %}
     <div class="col-xl-3 col-lg-4 col-sm-12 col-md-6 mb-4">
         <div class="card">
-        <img src="/static/banner.jpeg" alt="Card 1 Image">
+        <img src="{{ universite.photo_universite }}" alt="Card 1 Image">
         <h4 class="card-title">{{ universite.nom }} </h4>
           <div class="tags">
-              <div class="tag">{{ universite.id_region }}</div>
+              <div class="tag">{{ universite.nomRegion['nom'] }}</div>
+              <div class="tag">{{ universite.nombre_artistes }} Artists</div>
           </div>
         </div>
     </div>

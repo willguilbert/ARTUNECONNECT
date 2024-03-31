@@ -45,8 +45,12 @@
           <h4 class="card-title">{{ album.titre }}</h4>
           <div class="tags">
             <div class="tag album-duration">{{album.duree}}</div>
-            <div class="tag">{{ album.noteglobal }}</div>
             <div class="tag">{{ album.annee_parution }}</div>
+            {% if album.noteglobal is none %}
+                <div class="tag">No Rating</div>
+            {% else %}
+                <div class="tag">{{ album.noteglobal }} Stars</div>
+            {% endif %}
           </div>
         </div>
       </a>

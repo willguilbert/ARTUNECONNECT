@@ -6,7 +6,7 @@ h3 {
 .horizontal-scroll-container {
   /*width: 100%;*/
   overflow-x: auto;
-  white-space: nowrap;
+  /* white-space: nowrap;*/
   display: flex;
   padding: 20px;
   box-sizing: border-box;
