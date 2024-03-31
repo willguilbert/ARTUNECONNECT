@@ -133,6 +133,51 @@ def album(album_titre):
 def artiste(artiste_nom):
     artiste = static.Artiste.getArtisteDetails(artiste_nom)
     return render_template('Artiste.html', artiste=artiste)
+@app.route('/userpage')
+def userpage():
+    if 'loggedin' in session and session['loggedin']:
+        return render_template('Userpage.html', profile=session)
+    else:
+        # Redirigez l'utilisateur vers la page de connexion s'il n'est pas connecté
+        return redirect(url_for('login'))
+
+
+def get_current_user_id():
+    if 'id' in session:
+        return session['id']
+    else:
+
+        return None
+@app.route('/submit_rating_and_review', methods=['POST'])
+def submit_rating_and_review():
+    if request.method == 'POST':
+        # Récupérer les données soumises à partir du formulaire
+        note = request.form.get('note')
+        review = request.form.get('review')
+        album_titre = request.form.get('album_titre')  # Récupérer le titre de l'album
+
+        # Récupérer l'id de l'utilisateur
+        id_utilisateur = get_current_user_id()
+
+        # Récupérer les détails de l'album
+        album_details = static.Album.get_album_details(album_titre)
+
+
+        id_album = album_details['album']['id_album']
+
+        # Insérer les données dans la base de données
+        print(id_utilisateur)
+        print(id_album)
+        print( note)
+        print(review)
+        query = "INSERT INTO Noter (id_utilisateur, id_album, note, review) VALUES (%s, %s, %s, %s)"
+        sql_with_values = cursor.mogrify(query, (id_utilisateur, id_album, note, review))
+        print(sql_with_values)
+        connection.commit()
+
+            # Rediriger l'utilisateur vers la même page
+        return render_template('Album.html', album=album_details)
+
 
 
 

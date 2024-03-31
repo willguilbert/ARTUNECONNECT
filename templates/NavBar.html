@@ -46,14 +46,21 @@
           </div>
         </div>
         <div class="navItem">
-          <a href="{{url_for('login')}}">
-            <button id="btnConnexion" class="btn btn-primary">Connexion</button>
-          </a>
-          <a href="{{url_for('register')}}">
-            <button id="btnInscription" class="btn btn-secondary">
-              Inscription
-            </button>
-          </a>
+            {% if 'loggedin' in session and session['loggedin'] %}
+                <a href="{{url_for('userpage')}}">
+                    <button id="btnProfil" class="btn btn-primary">Mon profile</button>
+                </a>
+                <a href="{{url_for('logout')}}">
+                    <button id="btnDeconnexion" class="btn btn-danger">Déconnexion</button>
+                </a>
+            {% else %}
+                <a href="{{url_for('login')}}">
+                    <button id="btnConnexion" class="btn btn-primary">Connexion</button>
+                </a>
+                <a href="{{url_for('register')}}">
+                    <button id="btnInscription" class="btn btn-secondary">Inscription</button>
+                </a>
+            {% endif %}
         </div>
       </div>
 
