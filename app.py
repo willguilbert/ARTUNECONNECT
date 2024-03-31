@@ -72,6 +72,10 @@ def register():
         email = request.form['email']
         nom = request.form['nom']
         prenom = request.form['prenom']
+        age = request.form['age']
+        link = request.form['lien_reseaux_sociaux']
+        bio = request.form['bio']
+        region = request.form['region_choice']
         cursor.execute('SELECT * FROM Utilisateur WHERE email = %s', (email,))
         account = cursor.fetchone()
         if account:
@@ -82,15 +86,19 @@ def register():
             msg = 'Please fill out the form!'
         else:
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
-            cursor.execute('INSERT INTO Utilisateur (nom, prenom, email, mot_de_passe) VALUES (%s, %s, %s, %s)',
-                           (nom,prenom,email, hashed_password))
+            cursor.execute('INSERT INTO Utilisateur (nom, prenom, email, mot_de_passe, age, bio, liens_reseaux_sociaux, id_region) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
+                (nom, prenom, email, hashed_password, age, bio, link, region))
             connection.commit()
             msg = "Account created!"
             return render_template('Register.html', msg=msg)
     elif request.method == 'POST':
         msg = 'Please fill out the form!'
 
-    return render_template('Register.html', msg=msg)
+    cursor.execute('SELECT id_region, nom FROM Region;')
+    regions = cursor.fetchall()
+
+    return render_template('Register.html', msg=msg, regions=regions)
+
 @app.route('/navCox')
 def navCox():
     return render_template('navCox.html')

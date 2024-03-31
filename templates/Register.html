@@ -6,16 +6,13 @@
         {% block content %}
 <div class="wrapper">
     <div class="form-left">
-        <h2 class="text-uppercase">Informations</h2>
+        <h2 class="text-uppercase">Returning User?</h2>
         <p>
-            Info :)
+            Click the button below to sign into your account
         </p>
-        <p class="text">
-            <span>Encore de Infos</span>
-            INFO ICI
-        </p>
+
         <div class="form-field">
-            <input type="submit" class="account" value="Have an Account?" onclick="login()">
+            <input type="submit" class="account" value="Sign in" onclick="login()">
         </div>
     </div>
     <form class="form-right" action="{{url_for('register')}}" method="post">
@@ -39,6 +36,28 @@
                 <label>Password</label>
                 <input type="password" name="password" id="pwd" class="input-field">
             </div>
+
+            <div class="col-sm-6 mb-3">
+                <label>Age</label>
+                <input type="number" name="age" id="age" class="input-field">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label>Social Media Link</label>
+            <input type="url" class="input-field" id="social_link" name="lien_reseaux_sociaux">
+        </div>
+        <div class="mb-3">
+            <label>Bio</label>
+            <input type="text" class="input-field" id="bio" name="bio">
+        </div>
+        <div class="row">
+                <label>Region</label>
+                {% for region in regions %}
+                    <div class="form-check">
+                        <input type="radio" name="region_choice" id="region_{{ region }}" class="form-check-input" value="{{ region['id_region'] }}">
+                        <label class="form-check-label" for="region_{{ region }}">{{ region['nom'] }}</label>
+                    </div>
+                {% endfor %}
         </div>
         <div class="mb-3" style='color: red'>
             {{msg}}
