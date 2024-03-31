@@ -9,6 +9,9 @@ import static.Universites
 import static.Album
 import static.Artiste
 import static.Merchs
+import static.BuyAlbum
+import static.BuyMerch
+import static.User
 from database import Database
 import re
 import bcrypt
@@ -21,6 +24,7 @@ cursor = database.get_cursor()
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY')
+
 database = Database()
 
 
@@ -48,7 +52,12 @@ def login():
                 session['loggedin'] = True
                 session['id'] = account['id_utilisateur']
                 session['email'] = account['email']
-                return render_template('Userpage.html', profile=session)
+                session['prenom'] = account['prenom']
+                session['nom'] = account['nom']
+                achats = static.User.getAchatsRecents(session['id'])
+                print(achats)
+                followings = static.User.getFollowings(session['id'])
+                return render_template('Userpage.html', profile=session, achats=achats)
             else:
                 msg = 'Wrong username or password'
         else:
@@ -58,10 +67,25 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.pop('loggedin', None)
-    session.pop('id', None)
-    session.pop('username', None)
+    session.clear()
     return redirect(url_for('login'))
+
+@app.route('/buyMerch', methods=[ 'POST'])
+def buyMerch():
+    idProduit = request.form.get('buyMerchId')
+    idUser = session['id']
+    success = static.BuyMerch.buy(idProduit, idUser)
+    if success:
+        return render_template('Confirmation.html')
+
+@app.route('/buyAlbum', methods=[ 'POST'])
+def buyAlbum():
+    idProduit = request.form.get('buyAlbumId')
+    print(idProduit)
+    idUser = session.get('id')
+    success = static.BuyAlbum.buy(idProduit, idUser)
+    if success:
+        return render_template('Confirmation.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])

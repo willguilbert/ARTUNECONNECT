@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Bienvenue {{ profile.nom }}</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.2/css/fontawesome.min.css" integrity="sha384-BY+fdrpOd3gfeRvTSMT+VUZmA728cfF9Z2G42xpaRkUGu2i3DyzpTURDo5A6CaLK" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <script src="../static/Auth.js/"></script>
 </head>
@@ -18,15 +18,17 @@
         <div class="row z-depth-3 shadow-lg mb-1 mt-3 border border-5 rounded-4 border-primary">
           <div class="col-sm-4 bg-primary rounded-left">
             <div class="card-block text-center text-white">
-              <img src="/static/IMG_6482.JPEG" class="rounded-circle mb-3 mt-5" style="width: 150px" alt="Avatar" />
+               <i
+                class="fa-solid fa-user rounded-circle mb-3 mt-5"
+                style="font-size: 150px"
+                alt="Avatar"
+              ></i>
               <h5 class="mb-2">
                 <strong>{{ profile.prenom }} {{ profile.nom }}
                   <span class="badge bg-danger">PRO</span>
                 </strong>
               </h5>
-              <p class="text-muted fst-italic" id="bio">{{ profile.bio }}</p>
-              <i class="fa-solid fa-star w-100 pb-4" style="color: #ffd43b">{{profile.rating }}</i>
-              <i class="far fa-edit fa-2x mb-4"></i>
+
             </div>
           </div>
           <div class="col-sm-8 bg-white rounded-4">
@@ -35,60 +37,71 @@
 
             <div class="row">
               <div class="col-6 mt-3 ml-2">
-                <p class="fw-bold">First Name</p>
-                <h6 class="fw-normal text-muted">{{ profile.prenom }}</h6>
+                <p class="fw-bold">Prénom</p>
+                <h6 class="fw-normal text-muted">{{ session['prenom']}}</h6>
               </div>
               <div class="col-6 mt-3">
-                <p class="fw-bold">Last Name</p>
-                <h6 class="fw-normal text-muted">{{ profile.nom }}</h6>
+                <p class="fw-bold">Nom famille</p>
+                <h6 class="fw-normal text-muted">{{ session['nom'] }}</h6>
               </div>
             </div>
 
             <div class="row">
               <div class="col-6 mt-3">
                 <p class="fw-bold">Email</p>
-                <h6 class="fw-normal text-muted">{{ profile.email }}</h6>
-              </div>
-              <div class="col-6 mt-3">
-                <p class="fw-bold">Phone</p>
-                <h6 class="fw-normal text-muted">{{ profile.telephone }}</h6>
-              </div>
-              <div class="col-12 mt-3">
-                <p class="fw-bold">City</p>
-                <h6 class="fw-normal text-muted">{{ profile.ville }}</h6>
-                <hr class="border border-secondary border-1 opacity-50" />
+                <h6 class="fw-normal text-muted">{{ session['email'] }}</h6>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-        <button class="btn btn-primary" onclick="logout()">Log out</button>
     </div>
 
-    <div class="container">
-        <div class="row d-flex mt-3">
-            <div class="col-md-10 mt-3 pt-3 pb-5">
-                <h2>Achats recents</h2>
-                <div class="card" style="width: 18rem;">
-                  <img src="/static/kanyetshirt.webp" class="card-img-top" alt="...">
-                  <div class="card-body">
-                    <h5 class="card-title">Nom merch : </h5>
-                    <p class="card-text">Description de litem</p>
-                  </div>
-                  <ul class="list-group list-group-flush">
-                    <li class="list-group-item">{{ profile.nom }}</li>
-                    <li class="list-group-item">{{ profile.prenom }}</li>
-                      <li class="list-group-item">{{ profile.rating }}</li>
-                  </ul>
-                  <div class="card-body">
-                    <button type="submit" name="soumettre" class="card-link btn btn-primary">Buy Again</button>
-                      <button type="submit" name="soumettre" class="card-link btn btn-primary">Refund</button>
-                  </div>
+<div class="container">
+  <div class="row d-flex mt-4">
+    <div class="col-md-12 mt-3 pt-3 pb-5">
+      <h2>Achats recents</h2>
+      <div class="row">
+        {% if achats['merch'] %}
+          {% for achat in achats['merch'] %}
+            <div class="col-md-4 col-sm-6 mb-3">
+              <div class="card h-100 text-center ">
+                <img src="{{ achat['photo_merch'] }}" class="card-img-top p-2" style="height: 350px;" alt="{{ achat['nom_article'] }}">
+                <div class="card-body">
+                  <h5 class="card-title">{{ achat['nom_article'] }} MERCH</h5>
+                  <p class="card-tag">{{ achat['taille'] }}</p>
+                  <p class="card-tag">{{ achats['transactions']['date_transaction'] }}</p>
+                  <span class="color-circle" style="background-color: #{{ achat['couleur'] }}; width: 30px; height: 30px"></span>
                 </div>
+                <div class="card-footer" style="background-color: #{{ achat['couleur'] }}">
+
+                </div>
+              </div>
             </div>
-        </div>
+          {% endfor %}
+        {% endif %}
+        {% if achats['albums'] %}
+          {% for achat in achats['albums'] %}
+            <div class="col-md-4 col-sm-6 mb-3">
+              <div class="card h-100 text-center ">
+                <img src="{{ achat['photo_album'] }}" class="card-img-top p-2" style="height: 350px;" alt="{{ achat['titre'] }}">
+                <div class="card-body">
+                  <h5 class="card-title">{{ achat['titre'] }} ALBUM</h5>
+                  <p class="card-tag">{{ achat['annee_parution'] }}</p>
+                  <p class="card-tag">{{ achats['transactions']['date_transaction'] }}</p>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+      </div>
+      {% if achats.get('merch') is none and achats.get('albums') is none %}
+        <h4 class="text-danger">Vous n'avez aucun achat recent</h4>
+      {% endif %}
     </div>
+  </div>
+</div>
 
         <div class="container">
         <div class="row d-flex mt-1">

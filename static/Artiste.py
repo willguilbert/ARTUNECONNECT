@@ -10,13 +10,12 @@ def getArtisteDetails(artiste_nom):
     artiste_details = {}
 
     try:
-            # Fetch the artist details
+
             cursor.execute("SELECT * FROM Artiste WHERE nom_artiste = %s", (artiste_nom,))
             artiste = cursor.fetchone()
             artiste_details['artiste'] = artiste
 
             if artiste:
-                # Fetch the albums and styles for each album
                 cursor.execute("""
                     SELECT Album.*, Styles.nom AS style_nom
                     FROM Album
@@ -35,8 +34,6 @@ def getArtisteDetails(artiste_nom):
                     'photo_album': album['photo_album'],
 
                 } for album in albums]
-
-                # Fetch the merchandise related to the artist
                 cursor.execute("SELECT * FROM Merch WHERE id_artiste = %s", (artiste['id_artiste'],))
                 merch = cursor.fetchall()
                 artiste_details['merch'] = merch
