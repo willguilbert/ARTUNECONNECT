@@ -166,13 +166,13 @@ def submit_rating_and_review():
         id_album = album_details['album']['id_album']
 
         # Insérer les données dans la base de données
-        print(id_utilisateur)
-        print(id_album)
-        print( note)
-        print(review)
+
         query = "INSERT INTO Noter (id_utilisateur, id_album, note, review) VALUES (%s, %s, %s, %s)"
         sql_with_values = cursor.mogrify(query, (id_utilisateur, id_album, note, review))
-        print(sql_with_values)
+
+
+        # Exécutez la requête
+        cursor.execute(query, (id_utilisateur, id_album, note, review))
         connection.commit()
 
             # Rediriger l'utilisateur vers la même page
