@@ -15,7 +15,16 @@
   <div class="row">
     <div class="col-md-10">
       <form method="POST" action="/albums">
-        {% for category in categories %}
+        {% for category in categories %} {% if category.id_style == choisie %}
+        <input
+          type="radio"
+          class="btn-check"
+          name="cat"
+          id="{{category.id_style}}"
+          value="{{category.id_style}}"
+          checked
+        />
+        {% else %}
         <input
           type="radio"
           class="btn-check"
@@ -23,9 +32,10 @@
           id="{{category.id_style}}"
           value="{{category.id_style}}"
         />
+        {% endif %}
         <label class="btn" for="{{category.id_style}}">{{category.nom}}</label>
         {% endfor %}
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Filter</button>
       </form>
     </div>
   </div>

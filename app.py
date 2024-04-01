@@ -140,7 +140,7 @@ def albums():
         chosen = request.form.get('cat')
         albums = static.Albums.getAlbums(chosen)
         categories = static.Albums.getCategories()
-        return render_template('Albums.html', albums=albums, categories = categories)
+        return render_template('Albums.html', albums=albums, categories = categories, choisie = chosen)
     else:
         albums = static.Albums.getAlbums(None)
         categories = static.Albums.getCategories()
