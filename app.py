@@ -54,6 +54,11 @@ def login():
                 session['email'] = account['email']
                 session['prenom'] = account['prenom']
                 session['nom'] = account['nom']
+                session['bio'] = account['bio']
+                session['age'] = account['age']
+                cursor.execute('SELECT nom FROM Region WHERE id_region = %s;', (account['id_region'],))
+                session['region'] = cursor.fetchone()
+                session['social_link'] = account['liens_reseaux_sociaux']
                 achats = static.User.getAchatsRecents(session['id'])
                 print(achats)
                 followings = static.User.getFollowings(session['id'])
