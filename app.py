@@ -60,7 +60,6 @@ def login():
                 session['region'] = cursor.fetchone()
                 session['social_link'] = account['liens_reseaux_sociaux']
                 achats = static.User.getAchatsRecents(session['id'])
-                print(achats)
                 followings = static.User.getFollowings(session['id'])
                 return render_template('Userpage.html', profile=session, achats=achats)
             else:
@@ -173,7 +172,9 @@ def artiste(artiste_nom):
 @app.route('/userpage')
 def userpage():
     if 'loggedin' in session and session['loggedin']:
-        return render_template('Userpage.html', profile=session)
+        achats = static.User.getAchatsRecents(session['id'])
+        followings = static.User.getFollowings(session['id'])
+        return render_template('Userpage.html', profile=session, achats=achats)
     else:
         # Redirigez l'utilisateur vers la page de connexion s'il n'est pas connecté
         return redirect(url_for('login'))
