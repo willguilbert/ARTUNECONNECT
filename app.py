@@ -136,9 +136,15 @@ def navCox():
 
 @app.route('/albums',  methods=['GET', 'POST'])
 def albums():
-    albums = static.Albums.getAlbums()
-    categories = static.Albums.getCategories()
-    return render_template('Albums.html', albums=albums, categories = categories)
+    if request.method == 'POST': 
+        chosen = request.form.get('cat')
+        albums = static.Albums.getAlbums(chosen)
+        categories = static.Albums.getCategories()
+        return render_template('Albums.html', albums=albums, categories = categories)
+    else:
+        albums = static.Albums.getAlbums(None)
+        categories = static.Albums.getCategories()
+        return render_template('Albums.html', albums=albums, categories = categories)
 
 
 @app.route('/merch', methods=['GET', 'POST'])
@@ -215,9 +221,6 @@ def submit_rating_and_review():
 
             # Rediriger l'utilisateur vers la même page
         return render_template('Album.html', album=album_details)
-
-
-
 
 if __name__ == '__main__':
     app.run(debug=True)

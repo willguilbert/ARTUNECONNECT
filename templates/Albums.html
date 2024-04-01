@@ -19,14 +19,13 @@
         <input
           type="radio"
           class="btn-check"
-          name="options-base"
-          id="option {{category.id_style}}"
-          autocomplete="off"
+          name="cat"
+          id="{{category.id_style}}"
+          value="{{category.id_style}}"
         />
-        <label class="btn" for="option {{category.id_style}}"
-          >{{category.nom}}</label
-        >
+        <label class="btn" for="{{category.id_style}}">{{category.nom}}</label>
         {% endfor %}
+        <button type="submit" class="btn btn-primary">Submit</button>
       </form>
     </div>
   </div>
@@ -47,9 +46,9 @@
             <div class="tag album-duration">{{album.duree}}</div>
             <div class="tag">{{ album.annee_parution }}</div>
             {% if album.noteglobal is none %}
-                <div class="tag">No Rating</div>
+            <div class="tag">No Rating</div>
             {% else %}
-                <div class="tag">{{ album.noteglobal }} Stars</div>
+            <div class="tag">{{ album.noteglobal }} Stars</div>
             {% endif %}
           </div>
         </div>

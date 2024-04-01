@@ -3,13 +3,14 @@ database = Database()
 connection = database.get_connection()
 cursor = database.get_cursor()
 
-def getAlbums():
+def getAlbums(choice):
     try:
-           # if category is None:
-        cursor.execute('SELECT * FROM Album;')
-        rowsAlbum = cursor.fetchall()
-            #else:
-             ##   rowsAlbum = cursor.fetchall()
+        if choice is None:
+            cursor.execute('SELECT * FROM Album;')
+            rowsAlbum = cursor.fetchall()
+        else:
+            cursor.execute(f'SELECT * FROM Album WHERE  id_style = {choice};')
+            rowsAlbum = cursor.fetchall()
         return rowsAlbum
     finally:
         #cursor.close()
