@@ -25,6 +25,7 @@ def getArtisteDetails(artiste_nom):
                 albums = cursor.fetchall()
                 artiste_details['albums'] = [{
                     'id_album': album['id_album'],
+                    'id_artiste': album['id_artiste'],
                     'titre': album['titre'],
                     'style': album['style_nom'],
                     'annee_parution': album['annee_parution'],

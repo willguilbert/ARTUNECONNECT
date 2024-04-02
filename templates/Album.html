@@ -42,7 +42,7 @@
     <div class="col-md-8">
       <h2>{{ album['album']['titre'] }}</h2>
       <a
-        href="{{ url_for('artiste', artiste_nom=album['artiste']['nom_artiste']) }}"
+        href="{{ url_for('artiste', artiste_nom=album['artiste']['nom_artiste'])}}"
         class="text-dark"
         ><p>{{ album['artiste']['nom_artiste'] }}</p></a
       >
@@ -50,7 +50,7 @@
         #{{ album['style'] }}
       </button>
       <div>
-        <span>Durée : </span><span>{{ album['album']['duree'] }}</span
+        <span>Durée : </span><span class="album-duration">{{ album['album']['duree'] }}</span
         ><span> minutes</span>
       </div>
       <div>
@@ -180,4 +180,5 @@
   integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
   crossorigin="anonymous"
 ></script>
+<script src="{{url_for('static', filename='FormatDuration.js') }}"></script>
 {% endblock %}

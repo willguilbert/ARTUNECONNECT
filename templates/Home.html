@@ -8,7 +8,7 @@
     <h3>Top Rated Albums</h3>
     <div class="horizontal-scroll-container">
         {% for album in rowsAlbum %}
-            <a href="{{ url_for('album', album_titre=album.titre) }}">
+            <a href="{{ url_for('album', album_titre=album.titre, id_artiste=album.id_artiste) }}">
                 <div class="card">
                     <img src="{{ album.photo_album }}" alt="Card 1 Image">
                     <h4 class="card-title">{{ album.titre }} </h4>

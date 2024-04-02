@@ -3,10 +3,10 @@ database = Database()
 connection = database.get_connection()
 cursor = database.get_cursor()
 
-def get_album_details(album_title):
+def get_album_details(album_title, id_artiste):
     album_details = {}
     try:
-            cursor.execute("SELECT * FROM Album WHERE titre = %s", (album_title,))
+            cursor.execute("SELECT * FROM Album WHERE titre = %s AND id_artiste=%s", (album_title,id_artiste,))
             album = cursor.fetchone()
 
             if album:

@@ -7,6 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
             crossorigin="anonymous"></script>
+<script src="{{url_for ('static', filename='Follow.js')}}"></script>
 {% endblock %}
 {% block content %}
     <div class="container my-5">
@@ -25,7 +26,7 @@
                     {% endfor %}
                     <p><strong>Origine: </strong>{{ artiste['artiste']['origine'] }}</p>
                     <p><strong>Bio: </strong>{{ artiste['artiste']['biographie_artiste'] }}</p>
-                    <button class="btn btn-primary mt-3">Suivre artiste</button>
+                    <button class="btn btn-primary mt-3 follow-btn" data-id="{{ artiste['artiste']['id_artiste'] }}">Suivre artiste</button>
                 </div>
             </div>
             <div class="col-md-4">
@@ -43,7 +44,7 @@
                                 {% if artiste['albums'][j] %}
                                     <div class="col-md-4">
                                         <div class="card">
-                                            <img src="{{ artiste['albums'][j]['photo'] }}" class="card-img-top"
+                                            <img src="{{ artiste['albums'][j]['photo_album'] }}" class="card-img-top"
                                                  alt="{{ artiste['albums'][j]['titre'] }}">
                                             <div class="card-body">
                                                 <h5 class="card-title">{{ artiste['albums'][j]['titre'] }}</h5>
@@ -51,7 +52,7 @@
                                                     class="card-text">{{ artiste['albums'][j]['duree'] }}</span>
                                             </div>
                                             <div class="card-footer text-center">
-                                                <a href="{{ url_for('album', album_titre=artiste['albums'][j]['titre']) }}"
+                                                <a href="{{ url_for('album', album_titre=artiste['albums'][j]['titre'], id_artiste=artiste['albums'][j]['id_artiste']) }}"
                                                    class="btn btn-primary ">Voir album</a>
                                             </div>
                                         </div>

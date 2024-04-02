@@ -33,10 +33,17 @@ def getAchatsRecents(idUser):
 
 
 def getFollowings(id):
+    followings = {'suivre' : [], 'artiste' : []}
     try:
-            cursor.execute('SELECT * FROM Styles;')
-            rowsCategory = cursor.fetchall()
-            return rowsCategory
+            cursor.execute('SELECT * FROM Suivre where id_utilisateur = %s', (id,))
+            follows = cursor.fetchall()
+            for follow in follows:
+                cursor.execute('SELECT * FROM Artiste WHERE id_artiste = %s', (follow['id_artiste'],))
+                artiste = cursor.fetchall()
+                followings['artiste']+=artiste
+                followings['suivre']=follows
+
     finally:
-        #cursor.close()
+
         pass
+    return followings

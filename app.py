@@ -1,6 +1,6 @@
 import hashlib
 
-from flask import Flask, render_template, request, url_for, session, redirect
+from flask import Flask, render_template, jsonify,request, url_for, session, redirect
 
 import static.Home as Home
 import static.Albums
@@ -12,6 +12,7 @@ import static.Merchs
 import static.BuyAlbum
 import static.BuyMerch
 import static.User
+import json
 from database import Database
 import re
 import bcrypt
@@ -61,7 +62,8 @@ def login():
                 session['social_link'] = account['liens_reseaux_sociaux']
                 achats = static.User.getAchatsRecents(session['id'])
                 followings = static.User.getFollowings(session['id'])
-                return render_template('Userpage.html', profile=session, achats=achats)
+
+                return render_template('Userpage.html', profile=session, achats=achats, followings=followings)
             else:
                 msg = 'Wrong username or password'
         else:
@@ -146,6 +148,32 @@ def albums():
         categories = static.Albums.getCategories()
         return render_template('Albums.html', albums=albums, categories = categories)
 
+@app.route('/unfollow', methods=['POST'])
+def unfollow():
+    id_utilisateur = session.get('id')
+    if not id_utilisateur:
+        return jsonify({'error': 'User not logged in'}), 403
+    data = request.get_json()
+    id_artiste = data.get('id_artiste')
+    try:
+        cursor.execute("DELETE FROM Suivre WHERE id_utilisateur = %s AND id_artiste = %s", (id_utilisateur, id_artiste))
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/follow', methods=['POST'])
+def follow():
+    id_utilisateur = session.get('id')
+    if not id_utilisateur:
+        return jsonify({'error': 'User not logged in'}), 403
+    data = request.get_json()
+    id_artiste = data.get('id_artiste')
+    try:
+        cursor.execute("INSERT INTO Suivre (id_utilisateur, id_artiste) VALUES  (%s ,%s)", (id_utilisateur, id_artiste))
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/merch', methods=['GET', 'POST'])
 def merchs():
@@ -165,22 +193,23 @@ def artistes():
     return render_template('Artistes.html', artistes=artistes)
 
 
-@app.route('/album/<string:album_titre>')
-def album(album_titre):
-    album = static.Album.get_album_details(album_titre)
+@app.route('/album/<string:album_titre>/<int:id_artiste>')
+def album(album_titre, id_artiste):
+    album = static.Album.get_album_details(album_titre, id_artiste)
     return render_template('Album.html', album=album)
 
 
 @app.route('/artiste/<string:artiste_nom>')
 def artiste(artiste_nom):
     artiste = static.Artiste.getArtisteDetails(artiste_nom)
+    print(artiste)
     return render_template('Artiste.html', artiste=artiste)
 @app.route('/userpage')
 def userpage():
     if 'loggedin' in session and session['loggedin']:
         achats = static.User.getAchatsRecents(session['id'])
         followings = static.User.getFollowings(session['id'])
-        return render_template('Userpage.html', profile=session, achats=achats)
+        return render_template('Userpage.html', profile=session, achats=achats, followings=followings)
     else:
         # Redirigez l'utilisateur vers la page de connexion s'il n'est pas connecté
         return redirect(url_for('login'))
@@ -190,7 +219,6 @@ def get_current_user_id():
     if 'id' in session:
         return session['id']
     else:
-
         return None
 @app.route('/submit_rating_and_review', methods=['POST'])
 def submit_rating_and_review():
