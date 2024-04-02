@@ -223,31 +223,16 @@ def get_current_user_id():
 @app.route('/submit_rating_and_review', methods=['POST'])
 def submit_rating_and_review():
     if request.method == 'POST':
-        # Récupérer les données soumises à partir du formulaire
         note = request.form.get('note')
         review = request.form.get('review')
-        album_titre = request.form.get('album_titre')  # Récupérer le titre de l'album
-
-        # Récupérer l'id de l'utilisateur
-        id_utilisateur = get_current_user_id()
-
-        # Récupérer les détails de l'album
-        album_details = static.Album.get_album_details(album_titre)
-
-
-        id_album = album_details['album']['id_album']
-
-        # Insérer les données dans la base de données
-
+        album_titre = request.form.get('album_titre')
+        artiste_id = request.form.get('artiste_id')
+        id_album = request.form.get('id_album')
+        id_utilisateur = session['id']
+        album_details = static.Album.get_album_details(album_titre, artiste_id)
         query = "INSERT INTO Noter (id_utilisateur, id_album, note, review) VALUES (%s, %s, %s, %s)"
-        sql_with_values = cursor.mogrify(query, (id_utilisateur, id_album, note, review))
-
-
-        # Exécutez la requête
         cursor.execute(query, (id_utilisateur, id_album, note, review))
         connection.commit()
-
-            # Rediriger l'utilisateur vers la même page
         return render_template('Album.html', album=album_details)
 
 if __name__ == '__main__':

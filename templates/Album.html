@@ -103,6 +103,16 @@
                     name="album_titre"
                     value="{{ album['album']['titre'] }}"
                   />
+                  <input
+                    type="hidden"
+                    name="artiste_id"
+                    value="{{ album['artiste']['id_artiste'] }}"
+                  />
+                  <input
+                    type="hidden"
+                    name="id_album"
+                    value="{{ album['album']['id_album'] }}"
+                  />
                   <div class="stars">
                     <i class="lar la-star" data-value="1"></i>
                     <i class="lar la-star" data-value="2"></i>
