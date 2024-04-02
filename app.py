@@ -88,7 +88,7 @@ def buyMerch():
 def buyAlbum():
     idProduit = request.form.get('buyAlbumId')
     print(idProduit)
-    idUser = session.get('id')
+    idUser = session['id']
     success = static.BuyAlbum.buy(idProduit, idUser)
     if success:
         return render_template('Confirmation.html')
