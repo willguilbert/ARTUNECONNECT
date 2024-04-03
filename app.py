@@ -1,7 +1,4 @@
-import hashlib
-
 from flask import Flask, render_template, jsonify,request, url_for, session, redirect
-
 import static.Home as Home
 import static.Albums
 import static.Artistes
@@ -12,7 +9,6 @@ import static.Merchs
 import static.BuyAlbum
 import static.BuyMerch
 import static.User
-import json
 from database import Database
 import re
 import bcrypt
@@ -31,6 +27,12 @@ database = Database()
 
 @app.route('/')
 def main():
+    """
+    Endpoint pour render la home page.
+    Fonction qui cree la page Home de lapplication. On va chercher les informations contenues dans la BD pour les
+    albums, les artistes et les unviersites.
+    :return: Render template de la Home page, avec les informations des albums, des artistes et des universites
+    """
     rowsAlbums = Home.getAlbums()
     rowsArtistes = Home.getArtistes()
     rowsUniversite = Home.getUniversite()
@@ -41,6 +43,16 @@ def main():
 #pour faire fonctionner le tout, ça prends une secret key.
 @app.route("/login", methods=['GET', 'POST'])
 def login():
+    """
+    Endpoint du login.
+    Fonction qui soccupe de gérer le login utilisateur. On va chercher les informations contenues dans le forms de login
+    et on vérifie que le email est valide et existe dans la BD. Ensuite, on verifie que le mot de passe entrée est le
+    meme que celui contenu dans la BD (on regarde le hash). On store ensuite dans le cookie session les informations
+    concernant l'utilisateur et on redirect vers la page UserPage, avec les informations de la session, les achats et
+    les followings du user courant.
+    :return: Render template de la UserPage, avec les informations de la session, les achats et les
+    followings du user courant.
+    """
     msg = ''
     if request.method == 'POST' and 'email' in request.form and 'password' in request.form:
         email = request.form['email']
@@ -65,19 +77,30 @@ def login():
 
                 return render_template('Userpage.html', profile=session, achats=achats, followings=followings)
             else:
-                msg = 'Wrong username or password'
+                msg = 'Mauvais mot de passe'
         else:
-            msg = 'Incorrect username/password!'
+            msg = 'Mot de passe ou email incorrect!'
     return render_template('Login.html', msg=msg)
 
 
 @app.route('/logout')
 def logout():
+    """
+    Endpoint pour logout le user courant
+    On fait seulement nettoyer la session courante, donc vider le cookie session.
+    :return: Redirect vers le login page.
+    """
     session.clear()
     return redirect(url_for('login'))
 
 @app.route('/buyMerch', methods=[ 'POST'])
 def buyMerch():
+    """
+    Endpoint pour l'achat de la merchandise.
+    Fonction qui permet de l'achat de la merchandise dans l'application. On prends le userID et le produitId de la
+    merch pour effectuer un INSERT dans la base de donnée. L'utilisateur *achete donc le produit associé au produitID.
+    :return: Render template de confirmations, une simple page de confirmation d'achat.
+    """
     idProduit = request.form.get('buyMerchId')
     idUser = session['id']
     success = static.BuyMerch.buy(idProduit, idUser)
@@ -86,8 +109,13 @@ def buyMerch():
 
 @app.route('/buyAlbum', methods=[ 'POST'])
 def buyAlbum():
+    """
+    Endpoint pour l'achat d'un album.
+    Fonction qui permet d'acheter un album. On prends le userID et le produitId de l'album pour faire un INSERT dans la
+    base de donnée. L'utilisateur achete donc l'album associée au produitID.
+    :return: Render template de confirmations, une simple page de confirmation d'achat'
+    """
     idProduit = request.form.get('buyAlbumId')
-    print(idProduit)
     idUser = session['id']
     success = static.BuyAlbum.buy(idProduit, idUser)
     if success:
@@ -96,6 +124,16 @@ def buyAlbum():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    """
+    Endpoint pour l'inscription d'un utilisateur au site.
+    Fonction qui permet de faire l'inscription d'un utilisateur dans la base de donnée pour lui donner accès aux
+    fonctionnalitées réservées aux user authenticated. On prends l'ensemble des informations qui sont stockées dans les
+    champs du form, on vérifie si ce email est déjà associé à un autre compte puis sinon, on hash le mot de passe de
+    l'utilisateur, on applique un salt et on stocke les informations du nouvel utilisateur dans la base de donnée,
+    avec le mot de passe hashé.
+    :return: Render template qui renvoie à registration avec un message qui est soit positif suite à la création,
+    ou bien un message d'erreur.
+    """
     msg = ''
     if request.method == 'POST' and 'prenom' in request.form and 'nom' in request.form and 'password' in request.form and 'email' in request.form:
         password = request.form['password'].encode('utf-8')
@@ -109,20 +147,20 @@ def register():
         cursor.execute('SELECT * FROM Utilisateur WHERE email = %s', (email,))
         account = cursor.fetchone()
         if account:
-            msg = 'Account already exists!'
+            msg = 'Ce compte existe deja!'
         elif not re.match(r'[^@]+@[^@]+\.[^@]+', email):
-            msg = 'Invalid email address!'
+            msg = 'Adresse invalide'
         elif not email or not password or not nom or not prenom:
-            msg = 'Please fill out the form!'
+            msg = 'Vous devez remplir le formulaire!'
         else:
             hashed_password = bcrypt.hashpw(password, bcrypt.gensalt())
             cursor.execute('INSERT INTO Utilisateur (nom, prenom, email, mot_de_passe, age, bio, liens_reseaux_sociaux, id_region) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
                 (nom, prenom, email, hashed_password, age, bio, link, region))
             connection.commit()
-            msg = "Account created!"
+            msg = "Compte creer"
             return render_template('Register.html', msg=msg)
     elif request.method == 'POST':
-        msg = 'Please fill out the form!'
+        msg = 'Vous devez remplir le formulaire!'
 
     cursor.execute('SELECT id_region, nom FROM Region;')
     regions = cursor.fetchall()
@@ -131,6 +169,10 @@ def register():
 
 @app.route('/navCox')
 def navCox():
+    """
+    ???????????????
+    :return:
+    """
     return render_template('navCox.html')
 
     return render_template('Register.html', msg=msg)
@@ -138,6 +180,14 @@ def navCox():
 
 @app.route('/albums',  methods=['GET', 'POST'])
 def albums():
+    """
+    Endpoint pour les albums.
+    Fonction qui s'occupe d'afficher les albums qui sont montrés sur la page Albums.html. On fetch les informations
+    concernant l'ensemble des albums et des styles dans la base de donnée et les filtres appliqués,
+    si certains on été sélectionnés.
+    :return: Render template de la page Albums.html avec les informations concernant les styles et les albums, avec le
+    filtre.
+    """
     if request.method == 'POST': 
         chosen = request.form.get('cat')
         albums = static.Albums.getAlbums(chosen)
@@ -148,64 +198,131 @@ def albums():
         categories = static.Albums.getCategories()
         return render_template('Albums.html', albums=albums, categories = categories)
 
-@app.route('/unfollow', methods=['POST'])
+@app.route('/unfollow', methods=['POST', 'GET'])
 def unfollow():
-    id_utilisateur = session.get('id')
-    if not id_utilisateur:
-        return jsonify({'error': 'User not logged in'}), 403
-    data = request.get_json()
-    id_artiste = data.get('id_artiste')
-    try:
-        cursor.execute("DELETE FROM Suivre WHERE id_utilisateur = %s AND id_artiste = %s", (id_utilisateur, id_artiste))
-        return jsonify({'success': True})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
+    """
+    Endpoint pour l'unfollow.
+    Fonction qui gère le unfollow, mais sur la page utilisateur. On sépare la logique du unfollow de celui dans la page
+    artiste pour simplifier l'interface utilisateur. On récupère le JSON qui contenait le artisteID qui a été unfollow,
+    puis on DELETE dans la base de donnée sur SUIVRE le tuple qui reliait le current userID et le artisteID.
+    :return: Objet JSON qui confirme le success ou l'erreur du unfollow.
+    """
+    if request.method == 'POST':
+        id_utilisateur = session.get('id')
+        if not id_utilisateur:
+            return jsonify({'error': 'User not logged in'}), 403
+        data = request.get_json()
+        id_artiste = data.get('id_artiste')
+        try:
+            cursor.execute("DELETE FROM Suivre WHERE id_utilisateur = %s AND id_artiste = %s", (id_utilisateur, id_artiste))
+            return jsonify({'success': True})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
 
-@app.route('/follow', methods=['POST'])
+@app.route('/follow', methods=['POST', 'DELETE'])
 def follow():
+    """
+    Endpoint follow.
+    Fonction qui gère le follow d'un artiste sur l'application. On vérifie d'abord si la méthode est un POST ou un
+    DELETE, puis on applique l'opération nécéssaire en fonction de l'ID artiste passée en query params ainsi que
+    de l'ID de l'utilisateur présentement connecté.On envoie ces informations dans la BD peu importe la méthode choisie,
+    soit on unfollow (DELETE) ou follow(POST).
+    :return: Variable follows qui confirme si l'utilisateur s'est abonné ou désabonné, et cette valeur sera
+    utiliser pour le display du bouton sur la page de l'artiste.
+    """
     id_utilisateur = session.get('id')
     if not id_utilisateur:
         return jsonify({'error': 'User not logged in'}), 403
-    data = request.get_json()
-    id_artiste = data.get('id_artiste')
+
+    id_artiste = request.args.get('artiste_id')
+    if not id_artiste:
+        return jsonify({'error': 'No artist ID provided'}), 400
+
     try:
-        cursor.execute("INSERT INTO Suivre (id_utilisateur, id_artiste) VALUES  (%s ,%s)", (id_utilisateur, id_artiste))
-        return jsonify({'success': True})
+        if request.method == 'POST':
+            cursor.execute("SELECT 1 FROM Suivre WHERE id_utilisateur = %s AND id_artiste = %s",
+                           (id_utilisateur, id_artiste))
+            is_following = cursor.fetchone() is not None
+            if is_following:
+                cursor.execute("DELETE FROM Suivre WHERE id_utilisateur = %s AND id_artiste = %s",
+                               (id_utilisateur, id_artiste))
+            else:
+                cursor.execute("INSERT INTO Suivre (id_utilisateur, id_artiste) VALUES (%s, %s)",
+                               (id_utilisateur, id_artiste))
+            follows = not is_following
+        else:
+            cursor.execute("SELECT 1 FROM Suivre WHERE id_utilisateur = %s AND id_artiste = %s",
+                           (id_utilisateur, id_artiste))
+            follows = cursor.fetchone() is not None
+
+        return jsonify({'follows': follows})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
 
 @app.route('/merch', methods=['GET', 'POST'])
 def merchs():
+    """
+    Endpoint pour la merch.
+    Fonction qui ne fait qu'appeler la base de données pour avoir les informations sur l'ensemble des merchs disponibles.
+    :return: Render template de la page merch avec l'ensemble des merchs.
+    """
     merchs = static.Merchs.getMerchs()
     return render_template('Merch.html', merchs=merchs)
 
 
 @app.route('/universities')
 def universities():
-     universites = static.Universites.getUniversites()
-     return render_template('Universites.html', universites=universites)
+    """
+    Endpoint pour universités.
+    Fonction qui ne fait qu'appeler la base de données pour avoir les informations sur l'ensemble des universities.
+    :return: Render template de la page universités avec l'ensemble des université
+    """
+    universites = static.Universites.getUniversites()
+    return render_template('Universites.html', universites=universites)
 
 
 @app.route('/artistes')
 def artistes():
+    """
+       Endpoint pour les artistes.
+       Fonction qui ne fait qu'appeler la base de données pour avoir les informations sur l'ensemble des artiste.
+       :return: Render template de la page artistes avec l'ensemble des artistes.
+       """
     artistes = static.Artistes.getArtistes()
     return render_template('Artistes.html', artistes=artistes)
 
 
 @app.route('/album/<string:album_titre>/<int:id_artiste>')
 def album(album_titre, id_artiste):
+    """
+       Endpoint pour un album.
+       Fonction qui va chercher l'ensemble des informations nécessaires pour la page d'un seul album. On utilise
+       le titre de l'album et l'id de l'artiste pour faire les appels.
+       :return: Render template de la page Album avec les informations concernant un seul album.
+       """
     album = static.Album.get_album_details(album_titre, id_artiste)
     return render_template('Album.html', album=album)
 
 
 @app.route('/artiste/<string:artiste_nom>')
 def artiste(artiste_nom):
+    """
+       Endpoint pour un artiste.
+       Fonction qui va chercher l'ensemble des informations relatives à un artiste, selon le nom de l'artiste passé
+       en paramètre.
+       :return: Render template de la page Artiste avec les informations concernant un artiste.
+       """
     artiste = static.Artiste.getArtisteDetails(artiste_nom)
     print(artiste)
     return render_template('Artiste.html', artiste=artiste)
 @app.route('/userpage')
 def userpage():
+    """
+    Endpoint pour UserPage.
+    On vérifie ici si l'utilisateur est connecté, et s'il' l'est on va récupérer l'ensemble des achats et des
+    followings du user connecté.
+    :return: Render template de la page User avec les informations sur lui, sur ses achats et ses followings.
+    """
     if 'loggedin' in session and session['loggedin']:
         achats = static.User.getAchatsRecents(session['id'])
         followings = static.User.getFollowings(session['id'])
@@ -215,13 +332,15 @@ def userpage():
         return redirect(url_for('login'))
 
 
-def get_current_user_id():
-    if 'id' in session:
-        return session['id']
-    else:
-        return None
 @app.route('/submit_rating_and_review', methods=['POST'])
 def submit_rating_and_review():
+    """
+    Endpoint pour l'envoie des ratings.
+    Fonciton qui récupère les données entrées par l'utilisateur dans le forms pour envoyer un review, et ajoute à la
+    base de données les informations relatives à ce review. On mets en relation l'utilisateur présentement connecté
+    et ces informations ainsi que les informations de l'album qu'on tente de noter.
+    :return: Render template de la page Album, ainsi que les details de l'album qu'on notait présentement.
+    """
     if request.method == 'POST':
         note = request.form.get('note')
         review = request.form.get('review')
@@ -236,4 +355,4 @@ def submit_rating_and_review():
         return render_template('Album.html', album=album_details)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()

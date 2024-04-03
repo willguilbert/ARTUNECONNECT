@@ -4,6 +4,10 @@ connection = database.get_connection()
 cursor = database.get_cursor()
 
 def getUniversites():
+    '''
+
+    :return:
+    '''
     try:
             cursor.execute('SELECT * FROM Universite;')
             rowsUniversite = cursor.fetchall()
@@ -18,6 +22,11 @@ def getUniversites():
 
 
 def RegionName(id):
+    '''
+
+    :param id:
+    :return:
+    '''
     try:
             cursor.execute(f'SELECT nom FROM Region WHERE id_region ={id};')
             RegionName = cursor.fetchone()

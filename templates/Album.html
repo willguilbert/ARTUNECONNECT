@@ -64,7 +64,7 @@
         data-toggle="modal"
         data-target="#exampleModal"
       >
-        Review
+        Noter
       </button>
 
       <!-- Modal -->
@@ -80,7 +80,7 @@
           <div class="modal-content">
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLabel">
-                Review {{album['album']['titre']}}
+                Noter {{album['album']['titre']}}
               </h5>
               <button
                 type="button"
@@ -122,7 +122,7 @@
                   </div>
                   <input type="hidden" name="note" id="note" value="0" />
                   <div class="mb-3">
-                    <label for="review" class="form-label">Review</label>
+                    <label for="review" class="form-label">Noter</label>
                     <textarea
                       class="form-control"
                       name="review"
@@ -137,14 +137,14 @@
             </div>
             <div class="modal-footer">
               {% if 'loggedin' in session and session['loggedin'] %}
-              <button type="submit" class="btn btn-primary">Submit</button>
+              <button type="submit" class="btn btn-primary">Envoyer</button>
               {% endif %}
               <button
                 type="button"
                 class="btn btn-secondary"
                 data-dismiss="modal"
               >
-                Close
+                Fermer
               </button>
             </form>
             </div>
@@ -158,20 +158,13 @@
     <div class="col-6">
        <form action="/buyAlbum" method="post">
                         <input type="hidden" name="buyAlbumId" value="{{ album['album']['id_produit'] }}">
-                        <button class="btn btn-primary"><i class="fas fa-dollar-sign"></i> Buy now</button>
+                        <button class="btn btn-warning"><i class="fas fa-dollar-sign"></i>Acheter</button>
                     </form>
-    </div>
-    <div class="col-6 text-end">
-      {% if 'loggedin' in session and session['loggedin'] %}
-      <a class="btn btn-primary mt-3">Suivre artiste</a>
-      {% else %}
-      <a class="btn btn-primary mt-3">Suivre artiste</a>
-      {% endif %}
     </div>
     <div class="row">
       <div class="col-12">
         <a href="https://www.spotify.com" class="btn btn-success mt-3"
-          ><i class="fa fa-play-circle"></i>Play on Spotify</a
+          ><i class="fa fa-play-circle"></i>Jouer sur Spotify</a
         >
       </div>
       <div class="row">

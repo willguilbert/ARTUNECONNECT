@@ -8,6 +8,7 @@
   crossorigin="anonymous"
 />
 {% endblock %} {% block content %}
+<div class="container">
 <h1>Albums</h1>
 <h4>Filters</h4>
 
@@ -58,7 +59,7 @@
             {% if album.noteglobal is none %}
             <div class="tag">No Rating</div>
             {% else %}
-            <div class="tag">{{ album.noteglobal }} Stars</div>
+            <div class="tag">{{ album.noteglobal }} Étoiles</div>
             {% endif %}
           </div>
         </div>
@@ -66,6 +67,7 @@
     </div>
     {% endfor %}
   </div>
+</div>
 </div>
 
 <script

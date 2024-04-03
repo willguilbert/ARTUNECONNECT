@@ -1,3 +1,10 @@
+/*
+Fonction qui, lorsque le button avec la classe unfollow-btn est cliquee, envoie un AJAX call
+au endpoint unfollow qui lui soccupe de DELETE dans la BD le id passe dans le data-id.
+Modification du bouton pour montrer a lutilisateur que lartiste a bel et bien ete unfollowed.
+@param Button
+@param event
+*/
 document.addEventListener('DOMContentLoaded', function() {
     var unfollowButtons = document.querySelectorAll('.unfollow-btn');
     unfollowButtons.forEach(function(button) {
@@ -23,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                    button.classList.remove('btn-primary');
                     button.classList.add('btn-danger');
-                    button.innerText= 'Unfollowed!';
+                    button.innerText= 'Désabonner!';
                     button.disable();
                 } else {
                     console.error('Unfollow failed:', data.error);

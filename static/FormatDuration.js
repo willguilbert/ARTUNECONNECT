@@ -1,4 +1,10 @@
 function formatDuration(duration) {
+  /*
+  Fonction qui manipule une string duration et qui la transforme pour obtenir la string mais en minutes et secondes
+  conventionnelles.
+  param (String) duration
+  returns string en minutes et secondes
+   */
   let minutes = Math.floor(duration);
   let fractionalMinutes = duration - minutes;
   let seconds = Math.round(fractionalMinutes * 60);

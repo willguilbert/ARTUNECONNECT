@@ -4,8 +4,8 @@
     <link href="{{ url_for('static', filename='/cards.css') }}" rel="stylesheet"/>
 {% endblock %}
 {% block content %}
-    <!-- Row albums populaires -->
-    <h3>Top Rated Albums</h3>
+    <div class="container"></div>
+    <h3>Albums les mieux notées</h3>
     <div class="horizontal-scroll-container">
         {% for album in rowsAlbum %}
             <a href="{{ url_for('album', album_titre=album.titre, id_artiste=album.id_artiste) }}">
@@ -18,7 +18,7 @@
                         {% if album.noteglobal is none %}
                             <div class="tag">No Rating</div>
                         {% else %}
-                            <div class="tag">{{ album.noteglobal }} Stars</div>
+                            <div class="tag">{{ album.noteglobal }} Étoiles</div>
                         {% endif %}
                     </div>
                 </div>
@@ -29,8 +29,8 @@
         <a href="{{ url_for('albums') }}">Parcourir les albums</a>
     </button>
 
-    <!-- Row artistes en tendance -->
-    <h3>Most Followed Artists</h3>
+
+    <h3>Artistes les plus suivis</h3>
     <div class="horizontal-scroll-container">
         {% for artiste in rowsArtistes %}
             <a href="{{ url_for('artiste', artiste_nom=artiste.nom_artiste) }}">
@@ -50,8 +50,8 @@
         <a href="{{ url_for('artistes') }}">Parcourir les artistes</a>
     </button>
 
-    <!-- Row universite populaires -->
-    <h3>Most Popular Universities</h3>
+
+    <h3>Universités populaires</h3>
     <div class="horizontal-scroll-container">
         {% for uni in rowsUniversite %}
             <div class="card">
