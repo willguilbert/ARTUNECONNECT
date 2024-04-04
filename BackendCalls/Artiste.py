@@ -6,7 +6,14 @@ connection = database.get_connection()
 cursor = database.get_cursor()
 
 def getArtisteDetails(artiste_nom):
-    
+    """
+    Fonction qui instancie un dictionnaire de clé valeur pour l'artiste demandé. On Join sur les albums et on va également
+    chercher les styles que l'artiste a produit par le passé. On souhaite également avoir les informations concernant
+    les produits vendus par l'artiste. Ce dictionnaire est donc énorme, il contient l'ensemble des albums, style et
+    produit qu'un artiste possède dans la BD.
+    :param artiste_nom: Nom de l'artiste pour lequel on cherche des informations
+    :return: Dictionnaire comprenant les informations de l'artiste, soit ses albums, style et produit.
+    """
     artiste_details = {}
 
     try:
@@ -39,8 +46,7 @@ def getArtisteDetails(artiste_nom):
                 merch = cursor.fetchall()
                 artiste_details['merch'] = merch
 
-    finally:
-        #cursor.close()
-        pass
+    except Exception as e:
+        raise e
 
     return artiste_details

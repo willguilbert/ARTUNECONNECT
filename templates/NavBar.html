@@ -9,10 +9,7 @@
       integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
       crossorigin="anonymous"
     />
-    <link
-      href="{{ url_for('static', filename='style.css') }}"
-      rel="stylesheet"
-    />
+   <link href="{{ url_for('static', filename='/style/style.css') }}" rel="stylesheet">
 
     {% block head %}{% endblock %}
   </head>
@@ -22,7 +19,7 @@
         <div class="navItem">
           <a href="{{url_for('main')}}">
             <img
-              src="{{ url_for('static', filename='LogoArtTune.png') }}"
+              src="{{ url_for('static', filename='imgs/LogoArtTune.png') }}"
               width="106"
               height="64"
               alt="ArtTune Logo"
@@ -37,7 +34,7 @@
               class="searchInput"
             />
             <img
-              src="{{ url_for('static', filename='Search.png') }}"
+              src="{{ url_for('static', filename='imgs/Search.png') }}"
               width="20"
               height="20"
               alt=""
@@ -84,6 +81,5 @@
       </div>
     </nav>
     {%block content %}{% endblock %}
-    <script src="static/testNavCox.js"></script>
   </body>
 </html>

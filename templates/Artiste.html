@@ -1,101 +1,108 @@
 {% extends 'NavBar.html' %}
 {% block head %}
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="{{ url_for('static', filename='/ArtisteStyle.css') }}" rel="stylesheet"/>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
-            crossorigin="anonymous"></script>
-<script src="{{url_for ('static', filename='Follow.js')}}"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="{{ url_for('static', filename='/style/ArtisteStyle.css') }}" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+        crossorigin="anonymous"></script>
+<script src="{{ url_for('static', filename='/JS/Follow.js') }}"></script>
 {% endblock %}
 {% block content %}
-    <div class="container my-5">
-        <div class="row align-items-center">
+<div class="container my-5">
 
-            <div class="col-md-8">
-                <div class="bg-light p-4 rounded">
-                    <h2 class="mb-3">{{ artiste['artiste']['nom_artiste'] }}</h2>
+    <div class="row align-items-center">
 
-                    {% set displayed_styles = [] %}
-                    {% for album in artiste['albums'] %}
-                        {% if album['style'] not in displayed_styles %}
-                            <button class="btn btn-outline-secondary" disabled>#{{ album['style'] }}</button>
-                            {% if displayed_styles.append(album['style']) %}{% endif %}
-                        {% endif %}
-                    {% endfor %}
-                    <p><strong>Origine: </strong>{{ artiste['artiste']['origine'] }}</p>
-                    <p><strong>Bio: </strong>{{ artiste['artiste']['biographie_artiste'] }}</p>
-                    <button class="btn btn-primary mt-3 follow-btn" data-id="{{ artiste['artiste']['id_artiste'] }}">Suivre artiste</button>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <img src="{{ artiste['artiste']['photo_artiste'] }}" class="img-fluid rounded" alt="IMG HERE">
-            </div>
-        </div>
-        <h2 class="mb-4 pt-5">Albums</h2>
-        <div id="albumCarousel" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner">
-                {% set num_albums = artiste['albums']|length %}
-                {% for i in range(0, num_albums, 3) %}
-                    <div class="carousel-item {{ 'active' if loop.first }}">
-                        <div class="row">
-                            {% for j in range(i, i + 3) %}
-                                {% if artiste['albums'][j] %}
-                                    <div class="col-md-4">
-                                        <div class="card">
-                                            <img src="{{ artiste['albums'][j]['photo_album'] }}" class="card-img-top"
-                                                 alt="{{ artiste['albums'][j]['titre'] }}">
-                                            <div class="card-body">
-                                                <h5 class="card-title">{{ artiste['albums'][j]['titre'] }}</h5>
-                                                <span>Durée : </span><span
-                                                    class="card-text">{{ artiste['albums'][j]['duree'] }}</span>
-                                            </div>
-                                            <div class="card-footer text-center">
-                                                <a href="{{ url_for('album', album_titre=artiste['albums'][j]['titre'], id_artiste=artiste['albums'][j]['id_artiste']) }}"
-                                                   class="btn btn-primary ">Voir album</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                        </div>
-                    </div>
+        <div class="col-md-8">
+            <div class="bg-light p-4 rounded">
+                <h2 class="mb-3">{{ artiste['artiste']['nom_artiste'] }}</h2>
+
+                {% set displayed_styles = [] %}
+                {% for album in artiste['albums'] %}
+                {% if album['style'] not in displayed_styles %}
+                <button class="btn btn-outline-secondary" disabled>#{{ album['style'] }}</button>
+                {% if displayed_styles.append(album['style']) %}{% endif %}
+                {% endif %}
                 {% endfor %}
+                <p><strong>Origine: </strong>{{ artiste['artiste']['origine'] }}</p>
+                <p><strong>Bio: </strong>{{ artiste['artiste']['biographie_artiste'] }}</p>
+                {% if 'id' in session %}
+                <button class="btn btn-primary mt-3 follow-btn" data-id="{{ artiste['artiste']['id_artiste'] }}">Suivre
+                    artiste
+                </button>
+                {% endif %}
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#albumCarousel" data-bs-slide="prev"
-                    style="filter: invert(0.5) sepia(1) saturate(5) hue-rotate(200deg);">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#albumCarousel" data-bs-slide="next"
-                    style="filter: invert(0.5) sepia(1) saturate(5) hue-rotate(200deg);">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="visually-hidden">Next</span>
-            </button>
         </div>
-
-        <h2 class="mb-4 pt-5">Produits</h2>
-        <div class="row">
-            {% for merch in artiste['merch'] %}
-                <div class="col-md-4 col-sm-6 mb-3">
-                    <div class="card h-100 text-center">
-                        <img src="{{ merch['photo_merch'] }}" class="card-img-top p-2"
-                             alt="img{{ merch['nom_article'] }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ merch['nom_article'] }}</h5>
-                            <p class="card-tag">{{ merch['taille'] }}</p>
-                            <span class="color-circle" style="background-color: #{{ merch['couleur'] }};"></span>
-                        </div>
-                        <div class="card-footer">
-                            <form action="/buyMerch" method="post">
-                                <input type="hidden" name="buyMerchId" value="{{ merch['id_produit'] }}">
-                                <button class="btn btn-primary"><i class="fas fa-dollar-sign"></i>Acheter</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
+        <div class="col-md-4">
+            <img src="{{ artiste['artiste']['photo_artiste'] }}" class="img-fluid rounded" alt="IMG HERE">
         </div>
     </div>
+    <h2 class="mb-4 pt-5">Albums</h2>
+    <div id="albumCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% set num_albums = artiste['albums']|length %}
+            {% for i in range(0, num_albums, 3) %}
+            <div class="carousel-item {{ 'active' if loop.first }}">
+                <div class="row">
+                    {% for j in range(i, i + 3) %}
+                    {% if artiste['albums'][j] %}
+                    <div class="col-md-4">
+                        <div class="card">
+                            <img src="{{ artiste['albums'][j]['photo_album'] }}" class="card-img-top"
+                                 alt="{{ artiste['albums'][j]['titre'] }}">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ artiste['albums'][j]['titre'] }}</h5>
+                                <span>Durée : </span><span
+                                    class="card-text">{{ artiste['albums'][j]['duree'] }}</span>
+                            </div>
+                            <div class="card-footer text-center">
+                                <a href="{{ url_for('album', album_titre=artiste['albums'][j]['titre'], id_artiste=artiste['albums'][j]['id_artiste']) }}"
+                                   class="btn btn-primary ">Voir album</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#albumCarousel" data-bs-slide="prev"
+                style="filter: invert(0.5) sepia(1) saturate(5) hue-rotate(200deg);">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#albumCarousel" data-bs-slide="next"
+                style="filter: invert(0.5) sepia(1) saturate(5) hue-rotate(200deg);">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <h2 class="mb-4 pt-5">Produits</h2>
+    <div class="row">
+        {% for merch in artiste['merch'] %}
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="card h-100 text-center">
+                <img src="{{ merch['photo_merch'] }}" class="card-img-top p-2"
+                     alt="img{{ merch['nom_article'] }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ merch['nom_article'] }}</h5>
+                    <p class="card-tag">{{ merch['taille'] }}</p>
+                    <span class="color-circle" style="background-color: #{{ merch['couleur'] }};"></span>
+                </div>
+                <div class="card-footer">
+                    {% if 'id' in session %}
+                    <form action="/buyMerch" method="post">
+                        <input type="hidden" name="buyMerchId" value="{{ merch['id_produit'] }}">
+                        <button class="btn btn-primary"><i class="fas fa-dollar-sign"></i>Acheter</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

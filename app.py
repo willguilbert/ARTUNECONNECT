@@ -1,14 +1,15 @@
-from flask import Flask, render_template, jsonify,request, url_for, session, redirect
-import static.Home as Home
-import static.Albums
-import static.Artistes
-import static.Universites
-import static.Album
-import static.Artiste
-import static.Merchs
-import static.BuyAlbum
-import static.BuyMerch
-import static.User
+from flask import Flask, render_template, jsonify, request, url_for, session, redirect, flash
+from pymysql.err import IntegrityError
+import BackendCalls.Home as Home
+import BackendCalls.Albums
+import BackendCalls.Artistes
+import BackendCalls.Universites
+import BackendCalls.Album
+import BackendCalls.Artiste
+import BackendCalls.Merchs
+import BackendCalls.BuyAlbum
+import BackendCalls.BuyMerch
+import BackendCalls.User
 from database import Database
 import re
 import bcrypt
@@ -33,10 +34,14 @@ def main():
     albums, les artistes et les unviersites.
     :return: Render template de la Home page, avec les informations des albums, des artistes et des universites
     """
-    rowsAlbums = Home.getAlbums()
-    rowsArtistes = Home.getArtistes()
-    rowsUniversite = Home.getUniversite()
-    return render_template('Home.html', rowsAlbum=rowsAlbums, rowsArtistes=rowsArtistes, rowsUniversite=rowsUniversite)
+    try:
+        rowsAlbums = Home.getAlbums()
+        rowsArtistes = Home.getArtistes()
+        rowsUniversite = Home.getUniversite()
+        return render_template('Home.html', rowsAlbum=rowsAlbums, rowsArtistes=rowsArtistes, rowsUniversite=rowsUniversite)
+    except Exception as e:
+        flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger la page Home.", 'error')
+        return render_template('Home.html', rowsAlbum=rowsAlbums, rowsArtistes=rowsArtistes, rowsUniversite=rowsUniversite)
 
 
 # Vous devez setter dans votre .env un SECRET_KEY=XXXX ou XXX est ce que vous désirez. C'est seulement
@@ -72,8 +77,8 @@ def login():
                 cursor.execute('SELECT nom FROM Region WHERE id_region = %s;', (account['id_region'],))
                 session['region'] = cursor.fetchone()
                 session['social_link'] = account['liens_reseaux_sociaux']
-                achats = static.User.getAchatsRecents(session['id'])
-                followings = static.User.getFollowings(session['id'])
+                achats = BackendCalls.User.getAchatsRecents(session['id'])
+                followings = BackendCalls.User.getFollowings(session['id'])
 
                 return render_template('Userpage.html', profile=session, achats=achats, followings=followings)
             else:
@@ -103,9 +108,14 @@ def buyMerch():
     """
     idProduit = request.form.get('buyMerchId')
     idUser = session['id']
-    success = static.BuyMerch.buy(idProduit, idUser)
-    if success:
-        return render_template('Confirmation.html')
+    success = BackendCalls.BuyMerch.buy(idProduit, idUser)
+    try:
+        if success:
+            return render_template('Confirmation.html', success=True)
+        else:
+            return render_template('Confirmation.html', success=False)
+    except Exception as e:
+        return render_template('Confirmation.html', success=False)
 
 @app.route('/buyAlbum', methods=[ 'POST'])
 def buyAlbum():
@@ -115,11 +125,17 @@ def buyAlbum():
     base de donnée. L'utilisateur achete donc l'album associée au produitID.
     :return: Render template de confirmations, une simple page de confirmation d'achat'
     """
-    idProduit = request.form.get('buyAlbumId')
-    idUser = session['id']
-    success = static.BuyAlbum.buy(idProduit, idUser)
-    if success:
-        return render_template('Confirmation.html')
+    try:
+        idProduit = request.form.get('buyAlbumId')
+        idUser = session['id']
+        success = BackendCalls.BuyAlbum.buy(idProduit, idUser)
+        if success:
+            return render_template('Confirmation.html', success=True)
+        else:
+            return render_template('Confirmation.html', success=False)
+    except Exception as e:
+        return render_template('Confirmation.html', success=False)
+
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -188,15 +204,19 @@ def albums():
     :return: Render template de la page Albums.html avec les informations concernant les styles et les albums, avec le
     filtre.
     """
-    if request.method == 'POST': 
-        chosen = request.form.get('cat')
-        albums = static.Albums.getAlbums(chosen)
-        categories = static.Albums.getCategories()
-        return render_template('Albums.html', albums=albums, categories = categories, choisie = chosen)
-    else:
-        albums = static.Albums.getAlbums(None)
-        categories = static.Albums.getCategories()
-        return render_template('Albums.html', albums=albums, categories = categories)
+    try:
+        if request.method == 'POST':
+            chosen = request.form.get('cat')
+            albums = BackendCalls.Albums.getAlbums(chosen)
+            categories = BackendCalls.Albums.getCategories()
+            return render_template('Albums.html', albums=albums, categories = categories, choisie = chosen)
+        else:
+            albums = BackendCalls.Albums.getAlbums(None)
+            categories = BackendCalls.Albums.getCategories()
+            return render_template('Albums.html', albums=albums, categories = categories)
+    except Exception as e:
+        flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les albums.", 'error')
+        return render_template('Albums.html', albums=albums, categories=categories)
 
 @app.route('/unfollow', methods=['POST', 'GET'])
 def unfollow():
@@ -231,12 +251,7 @@ def follow():
     utiliser pour le display du bouton sur la page de l'artiste.
     """
     id_utilisateur = session.get('id')
-    if not id_utilisateur:
-        return jsonify({'error': 'User not logged in'}), 403
-
     id_artiste = request.args.get('artiste_id')
-    if not id_artiste:
-        return jsonify({'error': 'No artist ID provided'}), 400
 
     try:
         if request.method == 'POST':
@@ -266,7 +281,11 @@ def merchs():
     Fonction qui ne fait qu'appeler la base de données pour avoir les informations sur l'ensemble des merchs disponibles.
     :return: Render template de la page merch avec l'ensemble des merchs.
     """
-    merchs = static.Merchs.getMerchs()
+    try:
+        merchs = BackendCalls.Merchs.getMerchs()
+    except Exception as e:
+        flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les produits.", 'error')
+        return render_template('Merch.html', merchs=merchs)
     return render_template('Merch.html', merchs=merchs)
 
 
@@ -277,7 +296,11 @@ def universities():
     Fonction qui ne fait qu'appeler la base de données pour avoir les informations sur l'ensemble des universities.
     :return: Render template de la page universités avec l'ensemble des université
     """
-    universites = static.Universites.getUniversites()
+    try:
+        universites = BackendCalls.Universites.getUniversites()
+    except Exception as e:
+        flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les Universités.", "error")
+        return render_template('Universites.html', universites=universites)
     return render_template('Universites.html', universites=universites)
 
 
@@ -288,7 +311,11 @@ def artistes():
        Fonction qui ne fait qu'appeler la base de données pour avoir les informations sur l'ensemble des artiste.
        :return: Render template de la page artistes avec l'ensemble des artistes.
        """
-    artistes = static.Artistes.getArtistes()
+    try:
+        artistes = BackendCalls.Artistes.getArtistes()
+    except Exception as e:
+        flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les Artistes.", "error")
+        return render_template('Artistes.html', artistes=artistes)
     return render_template('Artistes.html', artistes=artistes)
 
 
@@ -300,8 +327,12 @@ def album(album_titre, id_artiste):
        le titre de l'album et l'id de l'artiste pour faire les appels.
        :return: Render template de la page Album avec les informations concernant un seul album.
        """
-    album = static.Album.get_album_details(album_titre, id_artiste)
-    return render_template('Album.html', album=album)
+    try:
+        album = BackendCalls.Album.get_album_details(album_titre, id_artiste)
+        return render_template('Album.html', album=album)
+    except Exception as e:
+        flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger la page de l'album.", "error")
+        return render_template('Album.html', album=album)
 
 
 @app.route('/artiste/<string:artiste_nom>')
@@ -312,9 +343,14 @@ def artiste(artiste_nom):
        en paramètre.
        :return: Render template de la page Artiste avec les informations concernant un artiste.
        """
-    artiste = static.Artiste.getArtisteDetails(artiste_nom)
-    print(artiste)
-    return render_template('Artiste.html', artiste=artiste)
+    try:
+        artiste = BackendCalls.Artiste.getArtisteDetails(artiste_nom)
+        print(artiste)
+        return render_template('Artiste.html', artiste=artiste)
+    except Exception as e:
+        flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger la page de l'artiste.", "error")
+        return render_template('Artiste.html', artiste=artiste)
+
 @app.route('/userpage')
 def userpage():
     """
@@ -323,24 +359,30 @@ def userpage():
     followings du user connecté.
     :return: Render template de la page User avec les informations sur lui, sur ses achats et ses followings.
     """
-    if 'loggedin' in session and session['loggedin']:
-        achats = static.User.getAchatsRecents(session['id'])
-        followings = static.User.getFollowings(session['id'])
-        return render_template('Userpage.html', profile=session, achats=achats, followings=followings)
-    else:
-        # Redirigez l'utilisateur vers la page de connexion s'il n'est pas connecté
-        return redirect(url_for('login'))
+    try:
+        if 'loggedin' in session and session['loggedin']:
+            achats = BackendCalls.User.getAchatsRecents(session['id'])
+            followings = BackendCalls.User.getFollowings(session['id'])
+            return render_template('Userpage.html', profile=session, achats=achats, followings=followings)
+        else:
+            return redirect(url_for('login'))
+    except Exception as e:
+        flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger la page utilisateur.", "error")
+        return render_template('Userpage.html', profile=session)
 
 
 @app.route('/submit_rating_and_review', methods=['POST'])
 def submit_rating_and_review():
     """
-    Endpoint pour l'envoie des ratings.
-    Fonciton qui récupère les données entrées par l'utilisateur dans le forms pour envoyer un review, et ajoute à la
-    base de données les informations relatives à ce review. On mets en relation l'utilisateur présentement connecté
-    et ces informations ainsi que les informations de l'album qu'on tente de noter.
-    :return: Render template de la page Album, ainsi que les details de l'album qu'on notait présentement.
-    """
+        Endpoint pour l'envoie des ratings.
+        Fonciton qui récupère les données entrées par l'utilisateur dans le forms pour envoyer un review, et ajoute à la
+        base de données les informations relatives à ce review. On mets en relation l'utilisateur présentement connecté
+        et ces informations ainsi que les informations de l'album qu'on tente de noter. Si l'utilisateur tente de faire
+        un review pour un album sur lequel il a deja post un review, on génére un flash qui lui indique qu'il ne peut
+        pas le faire, et on rollback la BD pour l'intégrité des données. Un flash est également présenté si l'utilisateur
+        fais une note pour la première fois pour lui indiquer un succès.'
+        :return: Render template de la page Album, ainsi que les details de l'album qu'on notait présentement.
+        """
     if request.method == 'POST':
         note = request.form.get('note')
         review = request.form.get('review')
@@ -348,11 +390,25 @@ def submit_rating_and_review():
         artiste_id = request.form.get('artiste_id')
         id_album = request.form.get('id_album')
         id_utilisateur = session['id']
-        album_details = static.Album.get_album_details(album_titre, artiste_id)
-        query = "INSERT INTO Noter (id_utilisateur, id_album, note, review) VALUES (%s, %s, %s, %s)"
-        cursor.execute(query, (id_utilisateur, id_album, note, review))
-        connection.commit()
-        return render_template('Album.html', album=album_details)
+        album_details = BackendCalls.Album.get_album_details(album_titre, artiste_id)
+        try:
+            query = "INSERT INTO Noter (id_utilisateur, id_album, note, review) VALUES (%s, %s, %s, %s)"
+            cursor.execute(query, (id_utilisateur, id_album, note, review))
+            flash('Votre note a bien été envoyé!', 'success')
+            return render_template('Album.html', album=album_details)
+        except IntegrityError as e:
+            connection.rollback()
+            if 'duplicate entry' in str(e).lower():
+                flash('Vous avez déjà noté cet album!', 'error')
+            else:
+                flash('Une erreur est survenue, veuillez réessayer.', 'error')
+            return render_template('Album.html', album=album_details)
+        except Exception as e:
+            connection.rollback()
+            flash('Une erreur est survenue, veuillez réessayer.', 'error')
+            return render_template('Album.html', album=album_details)
+
+
 
 if __name__ == '__main__':
     app.run()

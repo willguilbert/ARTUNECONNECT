@@ -6,6 +6,16 @@ cursor = database.get_cursor()
 
 
 def get_album_details(album_title, id_artiste):
+    """
+    Fonction qui va chercher les informations d'un album, soit sont style, l'artiste l'ayant produit ainsi que l'ensemble
+    des informations concernant cet album. On cherche a construire un dictionnaire de clé valeur pour accéder aux
+    informations de l'album. Grâce aux requêtes SQL, on peut aller chercher les tuples satisfaisant les paramètres
+    de la fonction.
+    :param album_title: Titre de l'album qu'on cherche à avoir
+    :param id_artiste: id de l'artiste ayant produit cet album
+    :return: Dictionnaire clé valeur avec les albums, les chansons de cet album,l'artiste les ayants produit et
+    les styles de chaque album.
+    """
     album_details = {}
     try:
         cursor.execute("SELECT * FROM Album WHERE titre = %s AND id_artiste=%s", (album_title, id_artiste,))
@@ -25,8 +35,7 @@ def get_album_details(album_title, id_artiste):
             album_details['chansons'] = chansons
 
 
-    finally:
-        # cursor.close()
-        pass
+    except Exception as e:
+        raise e
 
     return album_details
