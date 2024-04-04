@@ -1,174 +1,159 @@
-/*-------------------------------------------SELECTS--------------------------------------------------*/
-
--- SELECT * FROM Album;
--- SELECT * FROM Artiste;
--- SELECT * FROM Chanson;
--- SELECT * FROM Merch;
--- SELECT * FROM Noter;
--- SELECT * FROM Produit;
--- SELECT * FROM Region;
--- SELECT * FROM Styles;
--- SELECT * FROM Suivre;
--- SELECT * FROM Tramsaction;
--- SELECT * FROM Universite;
--- SELECT * FROM Utilisateur;
 
 /*-------------------------------------------DATABASE-------------------------------------------------*/
 
-
+-- Database: artuneconnect
 CREATE DATABASE IF NOT EXISTS ARTUNECONNECT;
 
 USE ARTUNECONNECT;
 
 /*-------------------------------------------CREATES--------------------------------------------------*/
 
--- Region
+-- Table: Region
 CREATE TABLE Region (
-    id_region INTEGER AUTO_INCREMENT,
-    nom VARCHAR(64),
+    id_region INTEGER AUTO_INCREMENT, -- PRIMARY KEY
+    nom VARCHAR(64), -- nom d'une région
 
     PRIMARY KEY (id_region)
 );
 
--- Universite
+-- Table: Universite
 CREATE TABLE Universite (
-    id_universite INTEGER AUTO_INCREMENT,
-    nom VARCHAR(64),
-    id_region INTEGER,
-    nombre_artistes INTEGER DEFAULT 0,
-    photo_universite VARCHAR(256),
+    id_universite INTEGER AUTO_INCREMENT, -- PRIMARY KEY
+    nom VARCHAR(64), -- nom d'une université
+    id_region INTEGER, -- FOREIGN KEY
+    nombre_artistes INTEGER DEFAULT 0, -- nombre d'artistes allant à cette université
+    photo_universite VARCHAR(256), -- photo du logo de l'université
 
     PRIMARY KEY (id_universite),
     FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL,
-    CONSTRAINT CHK_nombreArtistes CHECK (nombre_artistes >= 0)
+    CONSTRAINT CHK_nombreArtistes CHECK (nombre_artistes >= 0) -- un nombre d'artiste ne peux pas être négatif
 );
 
--- Utilisateur
+-- Table: Utilisateur
 CREATE TABLE Utilisateur (
-    id_utilisateur INTEGER AUTO_INCREMENT,
-    nom VARCHAR(32),
-    prenom VARCHAR(32),
-    email VARCHAR(64),
-    mot_de_passe VARCHAR(64),
-    age INTEGER,
-    bio varchar(1024),
+    id_utilisateur INTEGER AUTO_INCREMENT, -- PRIMARY KEY
+    nom VARCHAR(32), -- nom d'un utilisateur
+    prenom VARCHAR(32), -- prénom d'un utilisateur
+    email VARCHAR(64), -- courriel d'un utilisateur (utile pour connexion)
+    mot_de_passe VARCHAR(64), -- mot de passe d'un utilisateur (utile pour connexion)
+    age INTEGER, -- age d'un utilisateur
+    bio varchar(1024), -- biographie d'un utilisateur
     liens_reseaux_sociaux VARCHAR(256),
-    id_region INTEGER,
+    id_region INTEGER, -- FOREIGN KEY
 
     PRIMARY KEY (id_utilisateur),
     FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL,
-    UNIQUE (email)
+    UNIQUE (email) -- Un seul compte peut être créé par adresse courriel
 );
 
--- Artiste
+-- Table: Artiste
 CREATE TABLE Artiste (
-    id_artiste INTEGER AUTO_INCREMENT,
-    nom_artiste VARCHAR(32),
-    email_artiste VARCHAR(64),
-    biographie_artiste VARCHAR(1024),
-    origine VARCHAR(32),
-    id_universite INTEGER,
-    nombre_followers INTEGER DEFAULT 0,
-    photo_artiste VARCHAR(256),
+    id_artiste INTEGER AUTO_INCREMENT, -- PRIMARY KEY
+    nom_artiste VARCHAR(32), -- nom d'un artiste
+    email_artiste VARCHAR(64), -- courriel d'un artiste
+    biographie_artiste VARCHAR(1024), -- biographie d'un artiste
+    origine VARCHAR(32), -- ville d'origine d'un artiste
+    id_universite INTEGER, -- FOREIGN KEY
+    nombre_followers INTEGER DEFAULT 0, -- nombre d'utilisateurs qui suivent un artiste
+    photo_artiste VARCHAR(256), -- photo de profil d'un artiste
 
     PRIMARY KEY (id_artiste),
     FOREIGN KEY (id_universite) REFERENCES Universite (id_universite) ON DELETE SET NULL,
-    CONSTRAINT CHK_nombreFollowers CHECK (nombre_followers >= 0)
+    CONSTRAINT CHK_nombreFollowers CHECK (nombre_followers >= 0) -- un nombre d'utilisateurs ne peut pas être négatif
 );
 
--- Styles
+-- Table: Styles
 CREATE TABLE Styles (
-    id_style INTEGER AUTO_INCREMENT,
-    nom VARCHAR(32),
+    id_style INTEGER AUTO_INCREMENT, -- PRIMARY KEY
+    nom VARCHAR(32), -- nom d'un style musical
 
     PRIMARY KEY (id_style)
 );
 
--- Produit
+-- Table: Produit
 CREATE TABLE Produit (
-    id_produit INTEGER AUTO_INCREMENT,
-    prix REAL,
+    id_produit INTEGER AUTO_INCREMENT, -- PRIMARY KEY
+    prix REAL, -- prix d'un produit
 
     PRIMARY KEY (id_produit)
 );
 
--- Merch
+-- Table: Merch
 CREATE TABLE Merch (
-    id_merch INTEGER AUTO_INCREMENT,
-    id_produit INTEGER DEFAULT NULL, -- null, changé apres le trigger
-    nom_article VARCHAR(64),
-    couleur CHAR(6), -- hexa
-    taille ENUM ('XS', 'S', 'M', 'L', 'XL', 'XXL', 'Standard'),
-    typeArticle ENUM ('T-Shirt', 'Beanie', 'Hoodie'),
-    id_artiste INTEGER NOT NULL,
-    photo_merch VARCHAR(256),
+    id_merch INTEGER AUTO_INCREMENT, -- PRIMARY KEY
+    id_produit INTEGER DEFAULT NULL, -- FOREIGN KEY (null, changé apres le trigger)
+    nom_article VARCHAR(64), -- nom d'un article de marchandise
+    couleur CHAR(6), -- couleur d'un article de marchandise (hexa)
+    taille ENUM ('XS', 'S', 'M', 'L', 'XL', 'XXL', 'Standard'), -- taille d'un article de marchandise
+    typeArticle ENUM ('T-Shirt', 'Beanie', 'Hoodie'), -- type de l'article de marchandise
+    id_artiste INTEGER NOT NULL, -- FOREIGN KEY
+    photo_merch VARCHAR(256), -- photo de l'article de marchandise
 
     PRIMARY KEY (id_merch),
     FOREIGN KEY (id_produit) REFERENCES Produit (id_produit) ON DELETE CASCADE,
     FOREIGN KEY (id_artiste) REFERENCES Artiste (id_artiste) ON DELETE CASCADE
 );
 
--- Album
+-- Table: Album
 CREATE TABLE Album (
-    id_album INTEGER AUTO_INCREMENT,
-    titre VARCHAR(32) NOT NULL,
-    id_artiste INTEGER NOT NULL,
-    id_style INTEGER NOT NULL,
-    id_produit INTEGER DEFAULT NULL, -- null, changé apres le trigger
-    format ENUM ('Numerique', 'Disque', 'Cassette', 'Vinyl'), -- a voir
-    noteglobal REAL DEFAULT NULL,
-    annee_parution INTEGER,
-    duree REAL DEFAULT 0.0,
-    photo_album VARCHAR(256),
+    id_album INTEGER AUTO_INCREMENT, -- PRIMARY KEY
+    titre VARCHAR(32) NOT NULL, -- titre de l'album
+    id_artiste INTEGER NOT NULL, -- FOREIGN KEY
+    id_style INTEGER NOT NULL, -- FOREIGN KEY
+    id_produit INTEGER DEFAULT NULL, -- FOREIGN KEY (null, changé apres le trigger)
+    noteglobal REAL DEFAULT NULL, -- note globale d'un album
+    annee_parution INTEGER, -- annee de parution d'un album
+    duree REAL DEFAULT 0.0, -- duree totale d'un album
+    photo_album VARCHAR(256), -- photo de couverture d'un album
 
     PRIMARY KEY(id_album),
     FOREIGN KEY(id_artiste) REFERENCES Artiste (id_artiste),
     FOREIGN KEY(id_style) REFERENCES Styles (id_style),
     FOREIGN KEY(id_produit) REFERENCES Produit (id_produit),
-    CONSTRAINT CHK_noteGlobal CHECK (noteglobal >= 1 AND noteglobal <=5),
-    CONSTRAINT CHK_duree CHECK (duree >= 0.0)
+    CONSTRAINT CHK_noteGlobal CHECK (noteglobal >= 1 AND noteglobal <=5), -- la note globale d'un album doit être entre 1 et 5
+    CONSTRAINT CHK_duree CHECK (duree >= 0.0) -- la duree d'un album ne peut pas être négative
 );
 
--- Chanson
+-- Table: Chanson
 CREATE TABLE Chanson (
-    id_chanson INTEGER AUTO_INCREMENT,
-    id_album INTEGER NOT NULL,
-    titre VARCHAR(32) NOT NULL,
-    duree REAL,
+    id_chanson INTEGER AUTO_INCREMENT, -- PRIMARY KEY
+    id_album INTEGER NOT NULL, -- FOREIGN KEY
+    titre VARCHAR(32) NOT NULL, -- titre d'une chanson
+    duree REAL, -- duree d'une chanson
 
     PRIMARY KEY (id_chanson),
     FOREIGN KEY (id_album) REFERENCES Album (id_album)
 );
 
--- Transaction
+-- Table: Transaction
 CREATE TABLE Transaction (
-    id_transaction INTEGER AUTO_INCREMENT,
-    id_produit INTEGER NOT NULL,
-    id_utilisateur INTEGER NOT  NULL,
-    date_transaction DATE DEFAULT (CURRENT_DATE),
+    id_transaction INTEGER AUTO_INCREMENT, -- PRIMARY KEY
+    id_produit INTEGER NOT NULL, -- FOREIGN KEY
+    id_utilisateur INTEGER NOT  NULL, -- FOREIGN KEY
+    date_transaction DATE DEFAULT (CURRENT_DATE), -- date de la transaction
 
     PRIMARY KEY(id_transaction),
     FOREIGN KEY(id_produit) REFERENCES Produit (id_produit),
     FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur (id_utilisateur)
 );
 
--- Noter
+-- Table: Noter
 CREATE TABLE Noter (
-    id_utilisateur INTEGER,
-    id_album INTEGER,
-    note INTEGER,
-    review VARCHAR(2056),
+    id_utilisateur INTEGER, -- PRIMARY KEY (1/2) - FOREIGN KEY
+    id_album INTEGER, -- PRIMARY KEY (2/2) - FOREIGN KEY
+    note INTEGER, -- note donnée à un album sur 5
+    review VARCHAR(2056), -- commentaire donné sur un album
 
-    PRIMARY KEY (id_utilisateur, id_album),
+    PRIMARY KEY (id_utilisateur, id_album), -- un utilisateur ne peut pas mettre multiples reviews sur le même album
     FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur (id_utilisateur),
     FOREIGN KEY (id_album) REFERENCES Album (id_album),
-    CONSTRAINT CHK_NoterNote CHECK (note >= 1 AND note <=5)
+    CONSTRAINT CHK_NoterNote CHECK (note >= 1 AND note <=5) -- une note doit être entre 1 et 5 étoiles
 );
 
--- Suivre
+-- Table: Suivre
 CREATE TABLE Suivre (
-    id_utilisateur INTEGER NOT NULL,
-    id_artiste INTEGER NOT NULL,
+    id_utilisateur INTEGER NOT NULL, -- PRIMARY KEY (1/2) - FOREIGN KEY
+    id_artiste INTEGER NOT NULL, -- PRIMARY KEY (2/2) - FOREIGN KEY
 
     PRIMARY KEY (id_utilisateur, id_artiste),
     FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur (id_utilisateur),
@@ -177,12 +162,19 @@ CREATE TABLE Suivre (
 
 /*------------------------------------------TRIGGERS--------------------------------------------------*/
 
--- Trigger 1: Ajoute les items de merch à la table produit
+-- Trigger 1: ajout_merch_a_produit
+-- Description: Ajoute les items de merch à la table produit
+--
+-- Action:
+--   ajoute l'item dans la table produit, lui donne un prix en fonction de l'item et ajoute le id_produit dans la table merch
+--
+-- Triggered By:
+--   nouveau tuple dans table merch
+
 DELIMITER //
 CREATE TRIGGER ajout_merch_a_produit BEFORE INSERT ON Merch FOR EACH ROW
 
     BEGIN
-        -- ajoute le produit, avec le prix en fonction de l'item
         INSERT INTO Produit (prix) VALUES (
             CASE
                 WHEN NEW.typeArticle = 'T-Shirt' THEN 19.99
@@ -190,30 +182,43 @@ CREATE TRIGGER ajout_merch_a_produit BEFORE INSERT ON Merch FOR EACH ROW
                 WHEN NEW.typeArticle = 'Hoodie' THEN 29.99
             END );
 
-        -- ajoute le id_produit dans la table merch
         SET NEW.id_produit = LAST_INSERT_ID();
 
     END //
 DELIMITER ;
 
 
--- Trigger 2: Ajoute les items d'album à la table produit
+-- Trigger 2: ajout_album_a_produit
+-- Description: Ajoute les items d'album à la table produit
+--
+-- Action:
+--   ajoute l'item dans la table produit, lui donne un prix et ajoute le id_produit dans la table album
+--
+-- Triggered By:
+--   nouveau tuple dans la table album
+
 DELIMITER //
 CREATE TRIGGER ajout_album_a_produit BEFORE INSERT ON Album FOR EACH ROW
 
     BEGIN
-        -- ajoute le produit avec le prix pour un album
         INSERT INTO Produit (prix) VALUES
             (5.99);
 
-        -- ajoute le id_produit dans la table album
         SET NEW.id_produit = LAST_INSERT_ID();
 
     END //
 DELIMITER ;
 
 
--- Trigger 3: Modifie la note globale d'un album (une note ne peut pas etre modifiee une fois qu'elle est donnee)
+-- Trigger 3: note_globale_album
+-- Description: Modifie la note globale d'un album lorrsqu'une nouvelle note lui est donné
+--
+-- Action:
+--   calcul de la moyenne (somme et count) des notes données à l'album ayant reçu la dernière note
+--
+-- Triggered By:
+--   nouveau tuple dans la table noter
+
 DELIMITER //
 CREATE TRIGGER note_globale_album AFTER INSERT ON Noter FOR EACH ROW
 
@@ -234,10 +239,17 @@ CREATE TRIGGER note_globale_album AFTER INSERT ON Noter FOR EACH ROW
 
     END //
 DELIMITER ;
--- revoir le trigger note global si album a 0 notes
 
 
--- Trigger 4: Modifie la duree totale d'un album
+-- Trigger 4: duree_album_insert
+-- Description: Modifie la duree totale d'un album lorsqu'une nouvelle chanson lui est ajoutée
+--
+-- Action:
+--   ajout de la durée de la chanson à la durée totale de l'album jusqu'à présent
+--
+-- Triggered By:
+--   nouveau tuple dans la table chanson
+
 DELIMITER //
 CREATE TRIGGER duree_album_insert AFTER INSERT ON Chanson FOR EACH ROW
 
@@ -247,7 +259,16 @@ CREATE TRIGGER duree_album_insert AFTER INSERT ON Chanson FOR EACH ROW
     END //
 DELIMITER ;
 
--- Delete (une chanson se fait retirer de l'album
+
+-- Trigger 5: duree_album_delete
+-- Description: Modifie la duree totale d'un album lorsqu'une chanson lui est retirée
+--
+-- Action:
+--   ajout de la durée de la chanson à la durée totale de l'album
+--
+-- Triggered By:
+--   supression d'un tuple sur la table chanson
+
 DELIMITER //
 CREATE TRIGGER duree_album_delete AFTER DELETE ON Chanson FOR EACH ROW
 
@@ -258,7 +279,15 @@ CREATE TRIGGER duree_album_delete AFTER DELETE ON Chanson FOR EACH ROW
 DELIMITER ;
 
 
--- Trigger 5: Nombre d'artistes dans une université
+-- Trigger 6: nombre_artistes_insert
+-- Description: Modifie le nombre d'artistes dans une université lorsqu'un nouvel artiste est ajouté
+--
+-- Action:
+--   incrémente le nombre d'artiste actuel de l'université du nouvel artiste par 1
+--
+-- Triggered By:
+--   nouveau tuple dans la table artiste
+
 DELIMITER //
 CREATE TRIGGER nombre_artistes_insert AFTER INSERT ON Artiste FOR EACH ROW
 
@@ -270,7 +299,16 @@ CREATE TRIGGER nombre_artistes_insert AFTER INSERT ON Artiste FOR EACH ROW
     end //
 DELIMITER ;
 
--- Update (changement d'universite d'un artiste)
+
+-- Trigger 7: nombre_artistes_update
+-- Description: Modifie le nombre d'artistes dans une université lorsqu'un artiste quitte cette université
+--
+-- Action:
+--   décrémente le nombre d'artiste actuel de l'université de l'artiste qui quitte par 1
+--
+-- Triggered By:
+--   modification d'un tuple dans la table artiste
+
 DELIMITER //
 CREATE TRIGGER nombre_artistes_update AFTER UPDATE ON Artiste FOR EACH ROW
 
@@ -288,8 +326,15 @@ CREATE TRIGGER nombre_artistes_update AFTER UPDATE ON Artiste FOR EACH ROW
 DELIMITER ;
 
 
+-- Trigger 8: nombre_followers_insert
+-- Description: Modifie le nombre de followers d'un artiste lorsqu'un nouvel utilisateur suit cet artiste
+--
+-- Action:
+--   incrémente le nombre de followers actuel de l'artiste se faisant suivre par 1
+--
+-- Triggered By:
+--   nouveau tuple sur la relation suivre
 
--- Trigger 6: Nombre de followers d'un artiste
 DELIMITER //
 CREATE TRIGGER nombre_followers_insert AFTER INSERT ON Suivre FOR EACH ROW
 
@@ -299,7 +344,16 @@ CREATE TRIGGER nombre_followers_insert AFTER INSERT ON Suivre FOR EACH ROW
     end //
 DELIMITER ;
 
--- Delete (unfollow d'un artiste)
+
+-- Trigger 9: nombre_followers_delete
+-- Description: Modifie le nombre de followers d'un artiste lorsqu'un utilisateur arrete de suivre cet artiste
+--
+-- Action:
+--   décrémente le nombre de followers actuel de l'artiste auquel l'utilisateur se désabonne par 1
+--
+-- Triggered By:
+--   supression d'un tuple sur la relation suivre
+
 DELIMITER //
 CREATE TRIGGER nombre_followers_delete AFTER DELETE ON Suivre FOR EACH ROW
 
@@ -308,6 +362,7 @@ CREATE TRIGGER nombre_followers_delete AFTER DELETE ON Suivre FOR EACH ROW
         WHERE A.id_artiste = OLD.id_artiste;
     end //
 DELIMITER ;
+
 
 /*-------------------------------------------INSERTS--------------------------------------------------*/
 
@@ -576,152 +631,152 @@ INSERT INTO Merch (nom_article, couleur, taille, typeArticle, id_artiste, photo_
     ('Lily Cantabile Dark Gray Hoodie', '333333', 'S', 'hoodie', 72, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/MerchImgs/blackhoodie.webp');
 
 -- Album
-INSERT INTO Album (titre, id_artiste, id_style, format, annee_parution, photo_album) VALUES
+INSERT INTO Album (titre, id_artiste, id_style, annee_parution, photo_album) VALUES
     -- 3 albums par artiste
-    ('Pop Sensations', 83, 1, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a1.webp'),
-    ('Rock Revolution', 84, 2, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a10.webp'),
-    ('Hip Hop Harmony', 85, 3, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a100.webp'),
-    ('Jazzy Journeys', 86, 4, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a101.webp'),
-    ('Country Charm', 87, 5, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a102.webp'),
-    ('Electronic Echoes', 88, 6, 'Numerique', 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a103.webp'),
-    ('Classical Cadence', 89, 7, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a104.webp'),
-    ('Bluesy Beats', 90, 8, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a105.webp'),
-    ('R&B Rhythms', 91, 9, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a106.webp'),
-    ('Reggae Grooves', 92, 10, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a107.webp'),
-    ('Electro Euphoria', 93, 6, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a108.webp'),
-    ('Classical Serenity', 94, 7, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a109.webp'),
-    ('Bluesy Bliss', 95, 8, 'Numerique', 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a11.webp'),
-    ('R&B Reverie', 96, 9, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a110.webp'),
-    ('Reggae Reflections', 97, 10, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a111.webp'),
-    ('Electro Energy', 98, 6, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a112.webp'),
-    ('Classical Crescendo', 99, 7, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a113.webp'),
-    ('Symphony of Sound', 100, 4, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a114.webp'),
-    ('Melodic Reflections', 83, 2, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a115.webp'),
-    ('Vibrant Symphony', 84, 7, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a116.webp'),
-    ('Sonic Explorations', 85, 3, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a117.webp'),
-    ('Cantabile Dreams', 86, 6, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a118.webp'),
-    ('Lyrique Tales', 87, 5, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a119.webp'),
-    ('Harmonique Harmony', 88, 8, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a12.webp'),
-    ('Rhapsodic Journeys', 89, 4, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a124.webp'),
-    ('Harmonious Reverie', 90, 6, 'Numerique', 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a125.webp'),
-    ('Allegretto Adventures', 91, 5, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a126.webp'),
-    ('Adagietto Unfolding', 92, 10, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a127.webp'),
-    ('Ritornello Memories', 93, 6, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a128.webp'),
-    ('Fortissimo Power', 94, 6, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a129.webp'),
-    ('Crescendo Mastery', 95, 6, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a13.webp'),
-    ('Lyrical Expressions', 96, 7, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a130.webp'),
-    ('Dolce Melodies', 97, 9, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a131.webp'),
-    ('Virtuoso Showcase', 98, 1, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a132.webp'),
-    ('Serenata Moments', 99, 2, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a133.webp'),
-    ('Sonante Harmonies', 100, 10, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a134.webp'),
-    ('Melodic Dreams', 83, 1, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a83.webp'),
-    ('Harmonic Harmony', 84, 2, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a84.webp'),
-    ('Serenade Sonata', 85, 3, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a85.webp'),
-    ('Lyrical Landscapes', 86, 4, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a86.webp'),
-    ('Rhythmic Reverie', 87, 5, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a87.webp'),
-    ('Harmony Hues', 88, 6, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a88.webp'),
-    ('Melodic Musings', 89, 7, 'Numerique', 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a9.webp'),
-    ('Sonic Serenity', 90, 8, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a90.webp'),
-    ('Serenade Symphony', 91, 9, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a91.webp'),
-    ('Harmonic Hues', 92, 10, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a92.webp'),
-    ('Melodic Mastery', 93, 1, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a93.webp'),
-    ('Serenity Symphony', 94, 2, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a94.webp'),
-    ('Melodic Meditations', 95, 3, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a95.webp'),
-    ('Harmony Haven', 96, 4, 'Numerique', 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a96.webp'),
-    ('Sonic Serenity', 97, 5, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a97.webp'),
-    ('Serenade Sonata', 98, 6, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a98.webp'),
-    ('Melodic Musings', 99, 7, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a99.webp'),
-    ('Harmony Hues', 100, 8, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a100.webp'),
+    ('Pop Sensations', 83, 1, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a1.webp'),
+    ('Rock Revolution', 84, 2, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a10.webp'),
+    ('Hip Hop Harmony', 85, 3, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a100.webp'),
+    ('Jazzy Journeys', 86, 4, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a101.webp'),
+    ('Country Charm', 87, 5, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a102.webp'),
+    ('Electronic Echoes', 88, 6, 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a103.webp'),
+    ('Classical Cadence', 89, 7, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a104.webp'),
+    ('Bluesy Beats', 90, 8, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a105.webp'),
+    ('R&B Rhythms', 91, 9, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a106.webp'),
+    ('Reggae Grooves', 92, 10, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a107.webp'),
+    ('Electro Euphoria', 93, 6, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a108.webp'),
+    ('Classical Serenity', 94, 7, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a109.webp'),
+    ('Bluesy Bliss', 95, 8, 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a11.webp'),
+    ('R&B Reverie', 96, 9, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a110.webp'),
+    ('Reggae Reflections', 97, 10, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a111.webp'),
+    ('Electro Energy', 98, 6, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a112.webp'),
+    ('Classical Crescendo', 99, 7, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a113.webp'),
+    ('Symphony of Sound', 100, 4, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a114.webp'),
+    ('Melodic Reflections', 83, 2, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a115.webp'),
+    ('Vibrant Symphony', 84, 7, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a116.webp'),
+    ('Sonic Explorations', 85, 3, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a117.webp'),
+    ('Cantabile Dreams', 86, 6, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a118.webp'),
+    ('Lyrique Tales', 87, 5, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a119.webp'),
+    ('Harmonique Harmony', 88, 8, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a12.webp'),
+    ('Rhapsodic Journeys', 89, 4, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a124.webp'),
+    ('Harmonious Reverie', 90, 6, 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a125.webp'),
+    ('Allegretto Adventures', 91, 5, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a126.webp'),
+    ('Adagietto Unfolding', 92, 10, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a127.webp'),
+    ('Ritornello Memories', 93, 6, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a128.webp'),
+    ('Fortissimo Power', 94, 6, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a129.webp'),
+    ('Crescendo Mastery', 95, 6, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a13.webp'),
+    ('Lyrical Expressions', 96, 7, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a130.webp'),
+    ('Dolce Melodies', 97, 9, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a131.webp'),
+    ('Virtuoso Showcase', 98, 1, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a132.webp'),
+    ('Serenata Moments', 99, 2, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a133.webp'),
+    ('Sonante Harmonies', 100, 10, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a134.webp'),
+    ('Melodic Dreams', 83, 1, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a83.webp'),
+    ('Harmonic Harmony', 84, 2, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a84.webp'),
+    ('Serenade Sonata', 85, 3, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a85.webp'),
+    ('Lyrical Landscapes', 86, 4, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a86.webp'),
+    ('Rhythmic Reverie', 87, 5, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a87.webp'),
+    ('Harmony Hues', 88, 6, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a88.webp'),
+    ('Melodic Musings', 89, 7, 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a9.webp'),
+    ('Sonic Serenity', 90, 8, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a90.webp'),
+    ('Serenade Symphony', 91, 9, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a91.webp'),
+    ('Harmonic Hues', 92, 10, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a92.webp'),
+    ('Melodic Mastery', 93, 1, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a93.webp'),
+    ('Serenity Symphony', 94, 2, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a94.webp'),
+    ('Melodic Meditations', 95, 3, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a95.webp'),
+    ('Harmony Haven', 96, 4, 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a96.webp'),
+    ('Sonic Serenity', 97, 5, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a97.webp'),
+    ('Serenade Sonata', 98, 6, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a98.webp'),
+    ('Melodic Musings', 99, 7, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a99.webp'),
+    ('Harmony Hues', 100, 8, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a100.webp'),
     -- 2 albums par artiste
-    ('Rhapsodic Reverie', 65, 4, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a135.webp'),
-    ('Vibrato Emotions', 66, 1, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a136.webp'),
-    ('Harmonic Symphony', 67, 8, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a137.webp'),
-    ('Symphonic Aria', 68, 7, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a138.webp'),
-    ('Serenissimo Serenade', 69, 2, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a139.webp'),
-    ('Allegro Spirit', 70, 3, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a14.webp'),
-    ('Cadansa Rhythms', 71, 9, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a140.webp'),
-    ('Cantabile Melodies', 72, 6, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a141.webp'),
-    ('Sonata Stories', 73, 10, 'Numerique', 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a142.webp'),
-    ('Lyrique Love', 74, 5, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a143.webp'),
-    ('Melodista Moments', 75, 1, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a144.webp'),
-    ('Vivace Vibrance', 76, 3, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a145.webp'),
-    ('Harmonioso Harmony', 77, 8, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a146.webp'),
-    ('Adagio Elegance', 78, 10, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a15.webp'),
-    ('Forte Power', 79, 1, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a16.webp'),
-    ('Dolce Serenade', 80, 9, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a17.webp'),
-    ('Melodia Heartstrings', 81, 4, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a18.webp'),
-    ('Rhapsody Reflections', 82, 6, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a19.webp'),
-    ('Rhapsody Reverie', 65, 6, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a2.webp'),
-    ('Vibrato Serenade', 66, 5, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a20.webp'),
-    ('Harmonie Symphony', 67, 6, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a21.webp'),
-    ('Symphonique Dreams', 68, 5, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a22.webp'),
-    ('Serenissimo Sonata', 69, 6, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a23.webp'),
-    ('Allegro Adventures', 70, 5, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a24.webp'),
-    ('Cadansa Chronicles', 71, 1, 'Numerique', 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a25.webp'),
-    ('Cantabile Journey', 72, 2, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a26.webp'),
-    ('Sonata Stories', 73, 3, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a27.webp'),
-    ('Lyrique Ballads', 74, 4, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a28.webp'),
-    ('Melodista Medleys', 75, 5, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a29.webp'),
-    ('Vivace Variations', 76, 6, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a3.webp'),
-    ('Harmonioso Harmony', 77, 7, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a30.webp'),
-    ('Adagio Reverence', 78, 8, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a31.webp'),
-    ('Forte Fantasies', 79, 9, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a32.webp'),
-    ('Dolce Delights', 80, 10, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a33.webp'),
-    ('Crescendo Crescents', 81, 1, 'Numerique', 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a34.webp'),
-    ('Melodia Mosaic', 82, 2, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a35.webp'),
+    ('Rhapsodic Reverie', 65, 4, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a135.webp'),
+    ('Vibrato Emotions', 66, 1, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a136.webp'),
+    ('Harmonic Symphony', 67, 8, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a137.webp'),
+    ('Symphonic Aria', 68, 7, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a138.webp'),
+    ('Serenissimo Serenade', 69, 2, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a139.webp'),
+    ('Allegro Spirit', 70, 3, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a14.webp'),
+    ('Cadansa Rhythms', 71, 9, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a140.webp'),
+    ('Cantabile Melodies', 72, 6, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a141.webp'),
+    ('Sonata Stories', 73, 10, 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a142.webp'),
+    ('Lyrique Love', 74, 5, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a143.webp'),
+    ('Melodista Moments', 75, 1, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a144.webp'),
+    ('Vivace Vibrance', 76, 3, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a145.webp'),
+    ('Harmonioso Harmony', 77, 8, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a146.webp'),
+    ('Adagio Elegance', 78, 10, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a15.webp'),
+    ('Forte Power', 79, 1, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a16.webp'),
+    ('Dolce Serenade', 80, 9, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a17.webp'),
+    ('Melodia Heartstrings', 81, 4, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a18.webp'),
+    ('Rhapsody Reflections', 82, 6, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a19.webp'),
+    ('Rhapsody Reverie', 65, 6, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a2.webp'),
+    ('Vibrato Serenade', 66, 5, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a20.webp'),
+    ('Harmonie Symphony', 67, 6, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a21.webp'),
+    ('Symphonique Dreams', 68, 5, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a22.webp'),
+    ('Serenissimo Sonata', 69, 6, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a23.webp'),
+    ('Allegro Adventures', 70, 5, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a24.webp'),
+    ('Cadansa Chronicles', 71, 1, 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a25.webp'),
+    ('Cantabile Journey', 72, 2, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a26.webp'),
+    ('Sonata Stories', 73, 3, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a27.webp'),
+    ('Lyrique Ballads', 74, 4, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a28.webp'),
+    ('Melodista Medleys', 75, 5, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a29.webp'),
+    ('Vivace Variations', 76, 6, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a3.webp'),
+    ('Harmonioso Harmony', 77, 7, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a30.webp'),
+    ('Adagio Reverence', 78, 8, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a31.webp'),
+    ('Forte Fantasies', 79, 9, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a32.webp'),
+    ('Dolce Delights', 80, 10, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a33.webp'),
+    ('Crescendo Crescents', 81, 1, 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a34.webp'),
+    ('Melodia Mosaic', 82, 2, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a35.webp'),
     -- 1 album par artiste
-    ('Composer''s Canvas', 47, 5, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a36.webp'),
-    ('Lyricist''s Lament', 48, 6, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a37.webp'),
-    ('Rhythms Revealed', 49, 7, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a38.webp'),
-    ('Serenader''s Serenade', 50, 8, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a39.webp'),
-    ('Harmonics Harmony', 51, 9, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a4.webp'),
-    ('Muse''s Musings', 52, 1, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a40.webp'),
-    ('Sonnet Symphony', 53, 1, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a41.webp'),
-    ('Melodies Unleashed', 54, 2, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a42.webp'),
-    ('Harmony''s Haven', 55, 3, 'Numerique', 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a43.webp'),
-    ('Serenade Serenity', 56, 4, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a44.webp'),
-    ('Aria''s Awakening', 57, 5, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a45.webp'),
-    ('Melody''s Magic', 58, 6, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a46.webp'),
-    ('Harmonique Hues', 59, 7, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a47.webp'),
-    ('Crescendo Crescendos', 60, 8, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a48.webp'),
-    ('Serenada Songs', 61, 9, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a49.webp'),
-    ('Melodique Moments', 62, 10, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a5.webp'),
-    ('Harmonizer''s Melodies', 63, 1, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a50.webp'),
-    ('Serenade Serenity', 64, 2, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a51.webp'),
-    ('Composer''s Odyssey', 46, 5, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a52.webp'),
-    ('Lyrical Reflections', 45, 6, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a53.webp'),
-    ('Rhythmic Journeys', 44, 7, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a54.webp'),
-    ('Serenade Stories', 43, 8, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a55.webp'),
-    ('Harmonic Tales', 42, 9, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a56.webp'),
-    ('Musical Musings', 41, 10, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a57.webp'),
-    ('Sonnet Serenades', 40, 1, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a58.webp'),
-    ('Melodic Dreams', 39, 2, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a59.webp'),
-    ('Harmonious Harmony', 38, 3, 'Numerique', 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a6.webp'),
-    ('Serenity Symphony', 37, 4, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a60.webp'),
-    ('Aria of Emotions', 36, 5, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a61.webp'),
-    ('Melodic Bliss', 35, 6, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a62.webp'),
-    ('Harmonic Harmony', 34, 7, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a63.webp'),
-    ('Crescendo Chronicles', 33, 8, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a64.webp'),
-    ('Serenade of the Soul', 32, 9, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a65.webp'),
-    ('Melodic Moments', 31, 10, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a66.webp'),
-    ('Harmony Haven', 30, 1, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a67.webp'),
-    ('Serenade Serenity', 29, 2, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a68.webp'),
-    ('Harmonic Dreams', 28, 3, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a69.webp'),
-    ('Serenity Symphony', 27, 4, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a7.webp'),
-    ('Melodic Moments', 26, 5, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a70.webp'),
-    ('Harmony Haven', 25, 6, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a71.webp'),
-    ('Serenade Serenity', 24, 7, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a72.webp'),
-    ('Melodic Meditations', 23, 8, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a73.webp'),
-    ('Harmonic Harmony', 22, 9, 'Numerique', 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a74.webp'),
-    ('Musical Musings', 21, 10, 'Numerique', 2017, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a75.webp'),
-    ('Rhythmic Reverie', 20, 1, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a76.webp'),
-    ('Lyrical Landscapes', 19, 2, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a77.webp'),
-    ('Sonic Serenity', 18, 3, 'Numerique', 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a78.webp'),
-    ('Harmony Hues', 17, 4, 'Numerique', 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a79.webp'),
-    ('Melodic Mastery', 16, 5, 'Numerique', 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a8.webp'),
-    ('Serenade Symphony', 15, 6, 'Numerique', 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a80.webp'),
-    ('Harmonic Hues', 14, 7, 'Numerique', 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a81.webp'),
-    ('Lyrical Lullabies', 13, 8, 'Numerique', 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a82.webp');
+    ('Composer''s Canvas', 47, 5, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a36.webp'),
+    ('Lyricist''s Lament', 48, 6, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a37.webp'),
+    ('Rhythms Revealed', 49, 7, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a38.webp'),
+    ('Serenader''s Serenade', 50, 8, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a39.webp'),
+    ('Harmonics Harmony', 51, 9, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a4.webp'),
+    ('Muse''s Musings', 52, 1, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a40.webp'),
+    ('Sonnet Symphony', 53, 1, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a41.webp'),
+    ('Melodies Unleashed', 54, 2, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a42.webp'),
+    ('Harmony''s Haven', 55, 3, 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a43.webp'),
+    ('Serenade Serenity', 56, 4, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a44.webp'),
+    ('Aria''s Awakening', 57, 5, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a45.webp'),
+    ('Melody''s Magic', 58, 6, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a46.webp'),
+    ('Harmonique Hues', 59, 7, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a47.webp'),
+    ('Crescendo Crescendos', 60, 8, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a48.webp'),
+    ('Serenada Songs', 61, 9, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a49.webp'),
+    ('Melodique Moments', 62, 10, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a5.webp'),
+    ('Harmonizer''s Melodies', 63, 1, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a50.webp'),
+    ('Serenade Serenity', 64, 2, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a51.webp'),
+    ('Composer''s Odyssey', 46, 5, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a52.webp'),
+    ('Lyrical Reflections', 45, 6, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a53.webp'),
+    ('Rhythmic Journeys', 44, 7, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a54.webp'),
+    ('Serenade Stories', 43, 8, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a55.webp'),
+    ('Harmonic Tales', 42, 9, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a56.webp'),
+    ('Musical Musings', 41, 10, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a57.webp'),
+    ('Sonnet Serenades', 40, 1, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a58.webp'),
+    ('Melodic Dreams', 39, 2, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a59.webp'),
+    ('Harmonious Harmony', 38, 3, 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a6.webp'),
+    ('Serenity Symphony', 37, 4, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a60.webp'),
+    ('Aria of Emotions', 36, 5, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a61.webp'),
+    ('Melodic Bliss', 35, 6, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a62.webp'),
+    ('Harmonic Harmony', 34, 7, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a63.webp'),
+    ('Crescendo Chronicles', 33, 8, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a64.webp'),
+    ('Serenade of the Soul', 32, 9, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a65.webp'),
+    ('Melodic Moments', 31, 10, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a66.webp'),
+    ('Harmony Haven', 30, 1, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a67.webp'),
+    ('Serenade Serenity', 29, 2, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a68.webp'),
+    ('Harmonic Dreams', 28, 3, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a69.webp'),
+    ('Serenity Symphony', 27, 4, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a7.webp'),
+    ('Melodic Moments', 26, 5, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a70.webp'),
+    ('Harmony Haven', 25, 6, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a71.webp'),
+    ('Serenade Serenity', 24, 7, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a72.webp'),
+    ('Melodic Meditations', 23, 8, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a73.webp'),
+    ('Harmonic Harmony', 22, 9, 2024, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a74.webp'),
+    ('Musical Musings', 21, 10, 2017, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a75.webp'),
+    ('Rhythmic Reverie', 20, 1, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a76.webp'),
+    ('Lyrical Landscapes', 19, 2, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a77.webp'),
+    ('Sonic Serenity', 18, 3, 2019, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a78.webp'),
+    ('Harmony Hues', 17, 4, 2023, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a79.webp'),
+    ('Melodic Mastery', 16, 5, 2021, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a8.webp'),
+    ('Serenade Symphony', 15, 6, 2020, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a80.webp'),
+    ('Harmonic Hues', 14, 7, 2018, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a81.webp'),
+    ('Lyrical Lullabies', 13, 8, 2022, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/Album+imgs/a82.webp');
 
 
 -- Chanson
@@ -1324,5 +1379,3 @@ INSERT INTO Chanson (id_album, titre, duree) VALUES
 -- Noter (aucunes données initiales)
 
 -- Suivre (aucunes données initiales)
-
--- tests?
