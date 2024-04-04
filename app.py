@@ -183,15 +183,7 @@ def register():
 
     return render_template('Register.html', msg=msg, regions=regions)
 
-@app.route('/navCox')
-def navCox():
-    """
-    ???????????????
-    :return:
-    """
-    return render_template('navCox.html')
 
-    return render_template('Register.html', msg=msg)
 
 
 @app.route('/albums',  methods=['GET', 'POST'])
