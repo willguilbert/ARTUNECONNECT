@@ -17,9 +17,14 @@ def getAlbums(choice):
             cursor.execute('SELECT * FROM Album;')
             rowsAlbum = cursor.fetchall()
         else:
-            cursor.execute(f'SELECT * FROM Album WHERE  id_style = {choice};')
+            cursor.execute(f'CALL filter_temp_table({choice});')
+            cursor.execute('SELECT * FROM FilteredAlbums;')
             rowsAlbum = cursor.fetchall()
         shuffle(rowsAlbum)
+
+        for album in rowsAlbum:
+            album['nomStyle'] = getStyle(album['id_style'])
+
         return rowsAlbum
     except Exception as e:
         raise e
@@ -34,5 +39,19 @@ def getCategories():
             cursor.execute('SELECT * FROM Styles;')
             rowsCategory = cursor.fetchall()
             return rowsCategory
+    except Exception as e:
+        raise e
+
+
+def getStyle(id):
+    """
+    Fonction qui va chercher le nom d'un style en fonction d'un id style.
+    :param id: id du style
+    :return: nom du style
+    """
+    try:
+            cursor.execute(f'SELECT nom FROM Styles WHERE id_style ={id};')
+            styleName = cursor.fetchone()
+            return styleName
     except Exception as e:
         raise e

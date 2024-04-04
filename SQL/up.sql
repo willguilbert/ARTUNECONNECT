@@ -364,6 +364,33 @@ CREATE TRIGGER nombre_followers_delete AFTER DELETE ON Suivre FOR EACH ROW
 DELIMITER ;
 
 
+/*-------------------------------------------PROCEDURES--------------------------------------------------*/
+
+-- Procedure: filter_temp_table
+-- Description: Regroupe tous les albums du style choisi sur une table temporaire FilteredAlbums
+--
+-- Parameters:
+--     IN style_choisi: le id du style sur lequel le filtre est appliqué
+--
+-- Returns:
+--     Does not return any value but populates the FilteredAlbums table
+
+DELIMITER //
+
+CREATE PROCEDURE filter_temp_table(in style_choisi integer)
+
+BEGIN
+
+    DROP TEMPORARY TABLE IF EXISTS FilteredAlbums;
+    CREATE TEMPORARY TABLE IF NOT EXISTS FilteredAlbums LIKE Album;
+
+    INSERT INTO FilteredAlbums
+    SELECT * FROM Album WHERE id_style = style_choisi;
+
+end //
+
+DELIMITER ;
+
 /*-------------------------------------------INSERTS--------------------------------------------------*/
 
 -- Region
