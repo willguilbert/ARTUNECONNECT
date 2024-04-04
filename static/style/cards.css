@@ -1,8 +1,4 @@
-h3 {
-  margin-left: 80px;
-  margin-top: 40px;
-  margin-bottom: 40px;
-}
+
 .horizontal-scroll-container {
   /*width: 100%;*/
   overflow-x: auto;
@@ -68,11 +64,7 @@ h3 {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-weight: 600;
 }
-a {
-  color: black;
-  text-decoration: none;
-  font-size: 24px;
-}
+
 .tags {
   display: flex;
   flex-wrap: wrap; /* Allow tags to wrap to the next row */

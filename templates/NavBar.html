@@ -48,7 +48,7 @@
                     <button id="btnProfil" class="btn btn-primary">Mon profile</button>
                 </a>
                 <a href="{{url_for('logout')}}">
-                    <button id="btnDeconnexion" class="btn btn-danger">Déconnexion</button>
+                    <button id="btnDeconnexion" class="btn btn-primary">Déconnexion</button>
                 </a>
             {% else %}
                 <a href="{{url_for('login')}}">
@@ -62,16 +62,12 @@
       </div>
 
       <div class="navBottom">
-        <h3 class="menuItem">
-          <a href="{{ url_for ('artistes') }}">Artistes</a>
-        </h3>
-        <h3 class="menuItem"><a href="{{ url_for ('albums') }}">Albums</a></h3>
-        <h3 class="menuItem">
-          <a href="{{ url_for ('merchs') }}">Produits</a>
-        </h3>
-        <h3 class="menuItem">
-          <a href="{{ url_for ('universities') }}">Universités</a>
-        </h3>
+        <ul class="listeHorizontale">
+          <li><a href="{{ url_for('artistes') }}">Artistes</a></li>
+          <li><a href="{{ url_for('albums') }}">Albums</a></li>
+          <li><a href="{{ url_for('merchs') }}">Produits</a></li>
+          <li><a href="{{ url_for('universities') }}">Universités</a></li>
+        </ul>
       </div>
       <div class="banner">
         <div class="banner-text">

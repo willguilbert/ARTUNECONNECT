@@ -9,6 +9,7 @@
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
 />
+ <link href="{{ url_for('static', filename='/style/test.css') }}" rel="stylesheet"/>
 <link
         rel="stylesheet"
         href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css"
@@ -57,7 +58,8 @@
             <a
                     href="{{ url_for('artiste', artiste_nom=album['artiste']['nom_artiste'])}}"
                     class="text-dark"
-            ><p>{{ album['artiste']['nom_artiste'] }}</p></a
+            ><p><span class="artist-name">{{ album['artiste']['nom_artiste'] }}</span></p>
+             </a
             >
             <button class="btn btn-outline-secondary" disabled>
                 #{{ album['style'] }}

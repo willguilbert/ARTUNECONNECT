@@ -68,6 +68,20 @@
     font-weight: 400;
 
 }
+navTop.menuItem a {
+  text-decoration: none;
+  color: black; /* Définir la couleur du texte en noir */
+}
+
+.navTop.menuItem a:hover {
+  text-decoration: underline;
+}
+
+.navTop.menuItem a:active,
+.navTop.menuItem a:focus {
+  /* Supprimer tout effet de zoom ou de changement de couleur */
+  outline: none;
+}
 .banner {
     background-image: url('../imgs/banner.jpeg');
     background-size: cover;
@@ -79,9 +93,31 @@
 
 .banner-text {
     position: absolute;
-     background:  #FAF8DE;
+    background:  #FAF8DE;
     bottom: 20px;
     right: 20px;
     color: black;
 
+}
+.listeHorizontale {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.listeHorizontale li {
+  float: left;
+  margin-right: 20px;
+}
+
+.listeHorizontale li a {
+  display: block;
+  padding: 8px;
+  text-decoration: none;
+  color: black;
+}
+
+.listeHorizontale li a:hover {
+  text-decoration: underline;
 }
