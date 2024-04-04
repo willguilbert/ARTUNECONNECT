@@ -16,6 +16,10 @@ def getAlbums():
     try:
         cursor.execute('SELECT * FROM Album ORDER BY noteglobal DESC LIMIT 6;')
         rowsAlbum = cursor.fetchall()
+
+        for album in rowsAlbum:
+            album['nomStyle'] = BackendCalls.Albums.getStyle(album['id_style'])
+
         return rowsAlbum
     except Exception as e:
         raise e
