@@ -8,29 +8,29 @@
         {% block content %}
 <div class="wrapper">
     <div class="form-left">
-        <h2 class="text-uppercase">Returning User?</h2>
+        <h2 class="text-uppercase">Vous avez déjà un compte?</h2>
         <p>
-            Click the button below to sign into your account
+            Appuyez sur le bouton plus bas pour vous connecter
         </p>
 
         <div class="form-field">
-            <input type="submit" class="account" value="Sign in" onclick="login()">
+            <input type="submit" class="account" value="Se connecter" onclick="login()">
         </div>
     </div>
     <form class="form-right" action="{{url_for('register')}}" method="post">
-        <h2 class="text-uppercase">Register now</h2>
+        <h2 class="text-uppercase">S'inscrire maintenant</h2>
         <div class="row">
             <div class="col-sm-6 mb-3">
-                <label>First Name</label>
+                <label>Prénom</label>
                 <input type="text" name="prenom" id="first_name" class="input-field">
             </div>
             <div class="col-sm-6 mb-3">
-                <label>Last Name</label>
+                <label>Nom de famille</label>
                 <input type="text" name="nom" id="last_name" class="input-field">
             </div>
         </div>
         <div class="mb-3">
-            <label>Your Email</label>
+            <label>Email</label>
             <input type="email" class="input-field" name="email" required>
         </div>
         <div class="row">
@@ -45,7 +45,7 @@
             </div>
         </div>
         <div class="mb-3">
-            <label>Social Media Link</label>
+            <label>Lien réseaux sociaux</label>
             <input type="url" class="input-field" id="social_link" name="lien_reseaux_sociaux">
         </div>
         <div class="mb-3">
@@ -53,7 +53,7 @@
             <input type="text" class="input-field" id="bio" name="bio">
         </div>
         <div class="row">
-                <label>Region</label>
+                <label>Région</label>
                 {% for region in regions %}
                     <div class="form-check">
                         <input type="radio" name="region_choice" id="region_{{ region }}" class="form-check-input" value="{{ region['id_region'] }}">
@@ -65,7 +65,7 @@
             {{msg}}
         </div>
         <div class="form-field">
-            <input type="submit" value="Register" class="register" name="register">
+            <input type="submit" value="S'inscrire" class="register" name="register">
         </div>
     </form>
 </div>

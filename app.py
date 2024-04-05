@@ -173,7 +173,7 @@ def register():
             cursor.execute('INSERT INTO Utilisateur (nom, prenom, email, mot_de_passe, age, bio, liens_reseaux_sociaux, id_region) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)',
                 (nom, prenom, email, hashed_password, age, bio, link, region))
             connection.commit()
-            msg = "Compte creer"
+            msg = "Compte créé"
             return render_template('Register.html', msg=msg)
     elif request.method == 'POST':
         msg = 'Vous devez remplir le formulaire!'
