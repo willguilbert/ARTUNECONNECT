@@ -415,7 +415,7 @@ INSERT INTO Universite (nom, id_region, photo_universite) VALUES
     ('Université de Sherbrooke', 4, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteSherbrooke.jpg'),
     ('Université du Québec à Trois-Rivières', 5, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteTroisRiviere.jpg'),
     ('École des hautes études commerciales de Montréal', 6, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/hecMontreal.jpg'),
-    ('École de technologie supérieure', 6, 'https://artuneconnectimgs.s3.us-east2.amazonaws.com/UniImgs/universiteTechnologieSuperieure.jpg'),
+    ('École de technologie supérieure', 6, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteTechnologieSuperieure.jpg'),
     ('Polytechnique Montréal', 6, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/polytechniqueMontreal.jpg'),
     ('Université Concordia', 6, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/concordiaUniversity.jpg'),
     ('Université de Montréal', 6, 'https://artuneconnectimgs.s3.us-east-2.amazonaws.com/UniImgs/universiteMontreal.jpg'),
