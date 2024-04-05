@@ -37,8 +37,6 @@ def getArtisteDetails(artiste_nom):
                     'style': album['style_nom'],
                     'annee_parution': album['annee_parution'],
                     'duree': album['duree'],
-                    'format': album.get('format', None),
-                    #'format': album['format'],
                     'noteglobal': album['noteglobal'],
                     'photo_album': album['photo_album'],
 
