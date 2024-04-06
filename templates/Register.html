@@ -22,26 +22,26 @@
         <div class="row">
             <div class="col-sm-6 mb-3">
                 <label>Prénom</label>
-                <input type="text" name="prenom" id="first_name" class="input-field">
+                <input type="text" name="prenom" id="first_name" class="input-field" maxlength="32">
             </div>
             <div class="col-sm-6 mb-3">
                 <label>Nom de famille</label>
-                <input type="text" name="nom" id="last_name" class="input-field">
+                <input type="text" name="nom" id="last_name" class="input-field" maxlength="32">
             </div>
         </div>
         <div class="mb-3">
             <label>Email</label>
-            <input type="email" class="input-field" name="email" required>
+            <input type="email" class="input-field" name="email" maxlength="64" required>
         </div>
         <div class="row">
             <div class="col-sm-6 mb-3">
                 <label>Password</label>
-                <input type="password" name="password" id="pwd" class="input-field">
+                <input type="password" name="password" id="pwd" class="input-field" maxlength="64">
             </div>
 
             <div class="col-sm-6 mb-3">
                 <label>Age</label>
-                <input type="number" name="age" id="age" class="input-field">
+                <input type="number" name="age" id="age" class="input-field" max="120" min="1">
             </div>
         </div>
         <div class="mb-3">
@@ -50,7 +50,7 @@
         </div>
         <div class="mb-3">
             <label>Bio</label>
-            <input type="text" class="input-field" id="bio" name="bio">
+            <input type="text" class="input-field" id="bio" name="bio" maxlength="100">
         </div>
         <div class="row">
                 <label>Région</label>

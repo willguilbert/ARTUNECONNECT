@@ -64,7 +64,7 @@ def login():
         password = request.form['password'].encode('utf-8')
         cursor.execute('SELECT * FROM Utilisateur WHERE email = %s', (email, ))
         account = cursor.fetchone()
-        if account:
+        if account and re.match(r'[^@]+@[^@]+\.[^@]+', email):
             storedPassword = account['mot_de_passe'].encode('utf-8')
             if bcrypt.checkpw(password, storedPassword):
                 session['loggedin'] = True
@@ -160,6 +160,9 @@ def register():
         link = request.form['lien_reseaux_sociaux']
         bio = request.form['bio']
         region = request.form['region_choice']
+        if len(email) > 63 or len(nom) > 31 or len(prenom) > 31 or age > 120 or age < 1 or len(bio)>100:
+            msg = "Erreur dans l'un des champs entré"
+            return render_template('Register.html', msg=msg)
         cursor.execute('SELECT * FROM Utilisateur WHERE email = %s', (email,))
         account = cursor.fetchone()
         if account:
@@ -383,6 +386,9 @@ def submit_rating_and_review():
         id_album = request.form.get('id_album')
         id_utilisateur = session['id']
         album_details = BackendCalls.Album.get_album_details(album_titre, artiste_id)
+        if len(review)> 1000:
+            flash('Votre note est trop longue!', 'error')
+            return render_template('Album.html', album=album_details)
         try:
             query = "INSERT INTO Noter (id_utilisateur, id_album, note, review) VALUES (%s, %s, %s, %s)"
             cursor.execute(query, (id_utilisateur, id_album, note, review))

@@ -41,7 +41,7 @@
 <h3>Artistes les plus suivis</h3>
 <div class="horizontal-scroll-container">
     {% for artiste in rowsArtistes %}
-    <a href="{{ url_for('artiste', artiste_nom=artiste.nom_artiste) }}">
+    <a style="text-decoration: none;" href="{{ url_for('artiste', artiste_nom=artiste.nom_artiste) }}">
         <div class="card">
             <img src="{{ artiste.photo_artiste}}" alt="Card 1 Image">
             <h4 class="card-title">{{ artiste.nom_artiste }} </h4>
