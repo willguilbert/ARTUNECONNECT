@@ -160,7 +160,7 @@ def register():
         link = request.form['lien_reseaux_sociaux']
         bio = request.form['bio']
         region = request.form['region_choice']
-        if len(email) > 63 or len(nom) > 31 or len(prenom) > 31 or age > 120 or age < 1 or len(bio)>100:
+        if len(email) > 63 or len(nom) > 31 or len(prenom) > 31  or len(bio)>100:
             msg = "Erreur dans l'un des champs entré"
             return render_template('Register.html', msg=msg)
         cursor.execute('SELECT * FROM Utilisateur WHERE email = %s', (email,))
@@ -210,6 +210,8 @@ def albums():
             categories = BackendCalls.Albums.getCategories()
             return render_template('Albums.html', albums=albums, categories = categories)
     except Exception as e:
+        albums = BackendCalls.Albums.getAlbums(None)
+        categories = BackendCalls.Albums.getCategories()
         flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les albums.", 'error')
         return render_template('Albums.html', albums=albums, categories=categories)
 

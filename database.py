@@ -34,3 +34,29 @@ class Database:
 
     def get_connection(self):
         return self.connection
+
+    def init_db(self, sql_file_path):
+        """
+        Load le sql file et le preparer pour les tests.
+        :param sql_file_path: PATH du script tests.
+        :return: None
+        """
+        with self.connection.cursor() as cursor:
+            with open(sql_file_path, 'r') as f:
+                sql_script = f.read()
+            for statement in sql_script.split(';'):
+                cursor.execute(statement)
+
+    def drop_db(self):
+        """
+        On drop lensemble des constraints keys de la database avant de drop l'ensemble des tables.
+        :return: None
+        """
+        self.cursor.execute("SET FOREIGN_KEY_CHECKS=0;")
+        self.cursor.execute("SHOW TABLES;")
+        tables = self.cursor.fetchall()
+        for table in tables:
+            table_name = list(table.values())[0]
+            self.cursor.execute(f"DROP TABLE IF EXISTS `{table_name}`;")
+        self.cursor.execute("SET FOREIGN_KEY_CHECKS=1;")
+        self.connection.commit()
