@@ -326,7 +326,13 @@ def album(album_titre, id_artiste):
        """
     try:
         album = BackendCalls.Album.get_album_details(album_titre, id_artiste)
-        return render_template('Album.html', album=album)
+        # Exécutez la requête pour récupérer les avis de l'album
+        cursor.execute(
+            "SELECT U.nom, N.note, N.review FROM Noter N JOIN Utilisateur U ON N.id_utilisateur = U.id_utilisateur WHERE N.id_album = %s",
+            (album['album']['id_album'],))
+        avis_album = cursor.fetchall()
+        # Passage des avis au modèle lors du rendu du template
+        return render_template('Album.html', album=album, avis_album=avis_album)
     except Exception as e:
         flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger la page de l'album.", "error")
         return render_template('Album.html', album=album)
@@ -388,6 +394,11 @@ def submit_rating_and_review():
         id_album = request.form.get('id_album')
         id_utilisateur = session['id']
         album_details = BackendCalls.Album.get_album_details(album_titre, artiste_id)
+        # Exécutez la requête pour récupérer les avis actualisés des utilisateurs
+        cursor.execute(
+            "SELECT U.nom, N.note, N.review FROM Noter N JOIN Utilisateur U ON N.id_utilisateur = U.id_utilisateur WHERE N.id_album = %s",
+            (id_album,))
+        avis_album = cursor.fetchall()
         if len(review)> 1000:
             flash('Votre note est trop longue!', 'error')
             return render_template('Album.html', album=album_details)
@@ -395,18 +406,23 @@ def submit_rating_and_review():
             query = "INSERT INTO Noter (id_utilisateur, id_album, note, review) VALUES (%s, %s, %s, %s)"
             cursor.execute(query, (id_utilisateur, id_album, note, review))
             flash('Votre note a bien été envoyé!', 'success')
-            return render_template('Album.html', album=album_details)
+            #refaire l'execution de la requête pour récupérer le review q'ont vient d'inserer
+            cursor.execute(
+                "SELECT U.nom, N.note, N.review FROM Noter N JOIN Utilisateur U ON N.id_utilisateur = U.id_utilisateur WHERE N.id_album = %s",
+                (id_album,))
+            avis_album = cursor.fetchall()
+            return render_template('Album.html', album=album_details, avis_album=avis_album)
         except IntegrityError as e:
             connection.rollback()
             if 'duplicate entry' in str(e).lower():
                 flash('Vous avez déjà noté cet album!', 'error')
             else:
                 flash('Une erreur est survenue, veuillez réessayer.', 'error')
-            return render_template('Album.html', album=album_details)
+            return render_template('Album.html', album=album_details, avis_album=avis_album)
         except Exception as e:
             connection.rollback()
             flash('Une erreur est survenue, veuillez réessayer.', 'error')
-            return render_template('Album.html', album=album_details)
+            return render_template('Album.html', album=album_details, avis_album=avis_album)
 
 
 
