@@ -202,15 +202,17 @@ def albums():
     try:
         if request.method == 'POST':
             chosen = request.form.get('cat')
-            albums = BackendCalls.Albums.getAlbums(chosen)
+            # S'assurer que search est secure, injections SQL possibles
+            search = request.form.get('search')
+            albums = BackendCalls.Albums.getAlbums(chosen, search)
             categories = BackendCalls.Albums.getCategories()
             return render_template('Albums.html', albums=albums, categories = categories, choisie = chosen)
         else:
-            albums = BackendCalls.Albums.getAlbums(None)
+            albums = BackendCalls.Albums.getAlbums(None, None)
             categories = BackendCalls.Albums.getCategories()
             return render_template('Albums.html', albums=albums, categories = categories)
     except Exception as e:
-        albums = BackendCalls.Albums.getAlbums(None)
+        albums = BackendCalls.Albums.getAlbums(None, None)
         categories = BackendCalls.Albums.getCategories()
         flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les albums.", 'error')
         return render_template('Albums.html', albums=albums, categories=categories)

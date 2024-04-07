@@ -5,7 +5,7 @@ connection = database.get_connection()
 cursor = database.get_cursor()
 
 
-def getAlbums(choice):
+def getAlbums(choice, search):
     """
     Cette fonction applique les filtres choisis par l'utilisateur sur les albums retournés. On execute le curseur
     approprié sur la commande SQL. Si aucun filtre n'est appliqué, on retourne l'ensemble des tuples de la table Album.
@@ -13,12 +13,15 @@ def getAlbums(choice):
     :return: Dictionnaire des tuples de la relation Album avec les filtres si demandés.
     """
     try:
+        like = ""
+        if search is not None:
+            like = f" WHERE titre LIKE '%{search}%'"
         if choice is None:
-            cursor.execute('SELECT * FROM Album;')
+            cursor.execute(f'SELECT * FROM Album{like};')
             rowsAlbum = cursor.fetchall()
         else:
-            cursor.execute(f'CALL filter_temp_table({choice});')
-            cursor.execute('SELECT * FROM FilteredAlbums;')
+            cursor.execute(f'CALL filter_temp_table_style({choice});')
+            cursor.execute(f'SELECT * FROM FilteredAlbums{like};')
             rowsAlbum = cursor.fetchall()
         shuffle(rowsAlbum)
 
