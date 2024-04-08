@@ -311,7 +311,14 @@ def artistes():
        :return: Render template de la page artistes avec l'ensemble des artistes.
        """
     try:
-        if request.method == 'POST':
+        uni = request.args.get('uni')
+        if uni is not None:
+            chosen = uni
+            artistes = BackendCalls.Artistes.getArtistes(chosen, None)
+            universites = BackendCalls.Artistes.getUniversities()
+            return render_template('Artistes.html', artistes=artistes, universites=universites)
+
+        elif request.method == 'POST':
             chosen = request.form.get('cat')
             if chosen == 'Selectionner une université':
                 chosen = None

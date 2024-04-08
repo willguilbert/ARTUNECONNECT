@@ -12,7 +12,6 @@ def getArtistes(choice, search):
     """
     try:
         like = ""
-        print(choice)
         if search is not None:
             like = f" WHERE nom_artiste LIKE '%{search}%'"
         if choice is None :
