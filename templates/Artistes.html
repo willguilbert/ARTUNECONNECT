@@ -22,7 +22,8 @@
 {% endblock %} {% block content%}
 <div class="container">
   <h1>Artistes</h1>
-  <h4>Filters</h4>
+  <h4>Filtres et recherche</h4>
+
   {% with messages = get_flashed_messages(with_categories=true) %} {% if
   messages %}
   <div class="text-center">
@@ -49,7 +50,7 @@
             </select>
           <input
             type="text"
-            placeholder="Rechercher un ariste"
+            placeholder="Rechercher un artiste"
             name="search"
             class="searchInput"
             width="6"
@@ -65,6 +66,9 @@
   </div>
   <div class="container py-2 mt-5">
     <div class="row">
+      {% if not artistes %}
+          <h3>Aucun artiste ne correspond à votre recherche</h3>
+      {% endif %}
       {% for artiste in artistes %}
       <div class="col-xl-3 col-lg-4 col-sm-12 col-md-6 mb-4">
         <a href="{{url_for('artiste', artiste_nom = artiste.nom_artiste)}}">

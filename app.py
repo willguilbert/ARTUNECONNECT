@@ -310,24 +310,25 @@ def artistes():
        Fonction qui ne fait qu'appeler la base de données pour avoir les informations sur l'ensemble des artiste.
        :return: Render template de la page artistes avec l'ensemble des artistes.
        """
-    if request.method == 'POST' :
-        try:
+    try:
+        if request.method == 'POST':
             chosen = request.form.get('cat')
+            if chosen == 'Selectionner une université':
+                chosen = None
             search = request.form.get('search')
             artistes = BackendCalls.Artistes.getArtistes(chosen, search)
             universites = BackendCalls.Artistes.getUniversities()
-            return render_template('Artistes.html', artistes=artistes, universites = universites)
-        except Exception as e:
-            flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les Artistes.", "error")
-            return render_template('Artistes.html', artistes=artistes, universites = universites)
-    else :
-        try:
+            return render_template('Artistes.html', artistes=artistes, universites=universites)
+
+        else:
             artistes = BackendCalls.Artistes.getArtistes(None, None)
             universites = BackendCalls.Artistes.getUniversities()
             return render_template('Artistes.html', artistes=artistes, universites = universites)
-        except Exception as e:
-            flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les Artistes.", "error")
-            return render_template('Artistes.html', artistes=artistes, universites = universites)
+    except Exception as e:
+        artistes = BackendCalls.Artistes.getArtistes(None, None)
+        universites = BackendCalls.Artistes.getUniversities()
+        flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les Artistes.", "error")
+        return render_template('Artistes.html', artistes=artistes, universites=universites)
 
 
 @app.route('/album/<string:album_titre>/<int:id_artiste>')

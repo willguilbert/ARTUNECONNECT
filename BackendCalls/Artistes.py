@@ -11,16 +11,23 @@ def getArtistes(choice, search):
     :return: Les tuples artistes et leur nom d'université
     """
     try:
-            if choice is None : 
-                cursor.execute('SELECT * FROM Artiste;')
-            else:
-                cursor.execute(f'SELECT * FROM Artiste WHERE id_universite = {choice};')
-            
-            rowsArtiste = cursor.fetchall()
-            for artiste in rowsArtiste:
-                artiste['nomUni'] = UniversityName(artiste['id_universite'])
-            shuffle(rowsArtiste)
-            return rowsArtiste
+        like = ""
+        print(choice)
+        if search is not None:
+            like = f" WHERE nom_artiste LIKE '%{search}%'"
+        if choice is None :
+            cursor.execute(f'SELECT * FROM Artiste{like};')
+        else:
+            cursor.execute(f'CALL filter_temp_table_uni({choice});')
+            cursor.execute(f'SELECT * FROM FilteredArtistes{like};')
+
+        rowsArtiste = cursor.fetchall()
+        shuffle(rowsArtiste)
+
+        for artiste in rowsArtiste:
+            artiste['nomUni'] = UniversityName(artiste['id_universite'])
+
+        return rowsArtiste
     except Exception as e:
         raise e
 

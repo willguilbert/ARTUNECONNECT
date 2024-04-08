@@ -18,11 +18,11 @@ def getAlbums(choice, search):
             like = f" WHERE titre LIKE '%{search}%'"
         if choice is None:
             cursor.execute(f'SELECT * FROM Album{like};')
-            rowsAlbum = cursor.fetchall()
         else:
             cursor.execute(f'CALL filter_temp_table_style({choice});')
             cursor.execute(f'SELECT * FROM FilteredAlbums{like};')
-            rowsAlbum = cursor.fetchall()
+
+        rowsAlbum = cursor.fetchall()
         shuffle(rowsAlbum)
 
         for album in rowsAlbum:
