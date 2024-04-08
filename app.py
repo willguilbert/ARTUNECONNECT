@@ -303,19 +303,31 @@ def universities():
     return render_template('Universites.html', universites=universites)
 
 
-@app.route('/artistes')
+@app.route('/artistes', methods = ['GET', 'POST'])
 def artistes():
     """
        Endpoint pour les artistes.
        Fonction qui ne fait qu'appeler la base de données pour avoir les informations sur l'ensemble des artiste.
        :return: Render template de la page artistes avec l'ensemble des artistes.
        """
-    try:
-        artistes = BackendCalls.Artistes.getArtistes()
-    except Exception as e:
-        flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les Artistes.", "error")
-        return render_template('Artistes.html', artistes=artistes)
-    return render_template('Artistes.html', artistes=artistes)
+    if request.method == 'POST' :
+        try:
+            chosen = request.form.get('cat')
+            search = request.form.get('search')
+            artistes = BackendCalls.Artistes.getArtistes(chosen, search)
+            universites = BackendCalls.Artistes.getUniversities()
+            return render_template('Artistes.html', artistes=artistes, universites = universites)
+        except Exception as e:
+            flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les Artistes.", "error")
+            return render_template('Artistes.html', artistes=artistes, universites = universites)
+    else :
+        try:
+            artistes = BackendCalls.Artistes.getArtistes(None, None)
+            universites = BackendCalls.Artistes.getUniversities()
+            return render_template('Artistes.html', artistes=artistes, universites = universites)
+        except Exception as e:
+            flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les Artistes.", "error")
+            return render_template('Artistes.html', artistes=artistes, universites = universites)
 
 
 @app.route('/album/<string:album_titre>/<int:id_artiste>')
