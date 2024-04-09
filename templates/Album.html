@@ -94,6 +94,22 @@
             </div>
         </div>
     </div>
+    <div class="row">
+        <div class="col-6">
+            {% if 'id' in session %}
+            <form action="/buyAlbum" method="post">
+                <input type="hidden" name="buyAlbumId" value="{{ album['album']['id_produit'] }}">
+                <button class="btn btn-warning"><i class="fas fa-dollar-sign"></i>Acheter</button>
+            </form>
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <a href="https://www.spotify.com" class="btn btn-success mt-3"
+                ><i class="fa fa-play-circle"></i>Jouer sur Spotify</a
+                >
+            </div>
+            <div class="row">
     <div class="row mt-3">
         <div class="col-md-6">
             <!-- Liste des titres de chanson -->
@@ -106,6 +122,8 @@
                 {% endif %}
             </ol>
         </div>
+
+
         <div class="col-md-6">
             <h2>Avis des Utilisateurs</h2>
             {% if avis_album %}
