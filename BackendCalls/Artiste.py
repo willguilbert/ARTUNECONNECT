@@ -1,4 +1,5 @@
 from database import Database
+import BackendCalls.Merchs
 
 
 database = Database()
@@ -43,6 +44,10 @@ def getArtisteDetails(artiste_nom):
                 } for album in albums]
                 cursor.execute("SELECT * FROM Merch WHERE id_artiste = %s", (artiste['id_artiste'],))
                 merch = cursor.fetchall()
+
+                for item in merch:
+                    item['prix'] = BackendCalls.Merchs.getPrice(item['id_produit'])
+
                 artiste_details['merch'] = merch
 
     except Exception as e:

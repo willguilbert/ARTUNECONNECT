@@ -194,7 +194,7 @@ def albums():
     """
     Endpoint pour les albums.
     Fonction qui s'occupe d'afficher les albums qui sont montrés sur la page Albums.html. On fetch les informations
-    concernant l'ensemble des albums et des styles dans la base de donnée et les filtres appliqués,
+    concernant l'ensemble des albums et des styles dans la base de donnée et les filtres/recherches appliqués,
     si certains on été sélectionnés.
     :return: Render template de la page Albums.html avec les informations concernant les styles et les albums, avec le
     filtre.
@@ -307,7 +307,8 @@ def universities():
 def artistes():
     """
        Endpoint pour les artistes.
-       Fonction qui ne fait qu'appeler la base de données pour avoir les informations sur l'ensemble des artiste.
+       Fonction qui ne fait qu'appeler la base de données pour avoir les informations sur l'ensemble des artiste. Gère
+       également les filtres et la recherche d'artistes.
        :return: Render template de la page artistes avec l'ensemble des artistes.
        """
     try:
@@ -370,7 +371,6 @@ def artiste(artiste_nom):
        """
     try:
         artiste = BackendCalls.Artiste.getArtisteDetails(artiste_nom)
-        print(artiste)
         return render_template('Artiste.html', artiste=artiste)
     except Exception as e:
         flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger la page de l'artiste.", "error")

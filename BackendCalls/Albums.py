@@ -10,6 +10,7 @@ def getAlbums(choice, search):
     Cette fonction applique les filtres choisis par l'utilisateur sur les albums retournés. On execute le curseur
     approprié sur la commande SQL. Si aucun filtre n'est appliqué, on retourne l'ensemble des tuples de la table Album.
     :param choice: Style choisi par l'utilisateur
+    :param search: Recherche de l'utilisateur
     :return: Dictionnaire des tuples de la relation Album avec les filtres si demandés.
     """
     try:

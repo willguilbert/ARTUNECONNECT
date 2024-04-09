@@ -46,7 +46,7 @@
                         {% if 'id' in session %}
                         <form action="/buyMerch" method="post">
                             <input type="hidden" name="buyMerchId" value="{{ merch['id_produit'] }}">
-                            <button class="btn btn-primary"><i class="fas fa-dollar-sign"></i>Acheter</button>
+                            <button class="btn btn-primary"><i class="fas fa-dollar-sign"></i> {{ merch['prix']['prix'] }} - Acheter</button>
                         </form>
                         {% endif %}
                     </div>

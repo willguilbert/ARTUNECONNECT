@@ -1,4 +1,5 @@
 from database import Database
+import BackendCalls.Merchs
 
 database = Database()
 connection = database.get_connection()
@@ -34,6 +35,7 @@ def get_album_details(album_title, id_artiste):
             chansons = cursor.fetchall()
             album_details['chansons'] = chansons
 
+            album_details['prix'] = BackendCalls.Merchs.getPrice(album['id_produit'])
 
     except Exception as e:
         raise e

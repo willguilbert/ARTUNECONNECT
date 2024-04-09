@@ -99,7 +99,7 @@
             {% if 'id' in session %}
             <form action="/buyAlbum" method="post">
                 <input type="hidden" name="buyAlbumId" value="{{ album['album']['id_produit'] }}">
-                <button class="btn btn-warning"><i class="fas fa-dollar-sign"></i>Acheter</button>
+                <button class="btn btn-warning"><i class="fas fa-dollar-sign"></i> {{ album['prix']['prix'] }} Acheter</button>
             </form>
             {% endif %}
         </div>
@@ -117,7 +117,7 @@
             <ol class="list-group list-group-numbered list-group-flush">
                 {% if album['chansons'] %}
                     {% for chanson in album['chansons'] %}
-                        <li class="list-group-item">{{ chanson['titre'] }}</li>
+                        <li class="list-group-item">{{ chanson['titre'] }} (<span class="album-duration">{{ chanson['duree'] }}</span>)</li>
                     {% endfor %}
                 {% endif %}
             </ol>

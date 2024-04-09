@@ -7,7 +7,9 @@ cursor = database.get_cursor()
 def getArtistes(choice, search):
     """
     Cette fonction va chercher l'ensemble des artistes ainsi que le nom de l'université que fréquente chaque artiste.
-    Lance une exception en cas d'erreur.
+    Lance une exception en cas d'erreur. Gère également les filtres et les recherches d'artistes.
+    :param choice: filtre universite choisi par l'utilisateur
+    :param search: Recherche de l'utilisateur
     :return: Les tuples artistes et leur nom d'université
     """
     try:
