@@ -43,7 +43,9 @@ CREATE TABLE Utilisateur (
 
     PRIMARY KEY (id_utilisateur),
     FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL,
-    UNIQUE (email) -- Un seul compte peut être créé par adresse courriel
+    UNIQUE (email), -- Un seul compte peut être créé par adresse courriel
+    CONSTRAINT check_age CHECK (age >= 1 AND age <= 130), -- Ages possibles
+    CONSTRAINT chk_email_utilisateur CHECK (email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$') -- email valide
 );
 
 -- Table: Artiste
@@ -59,7 +61,8 @@ CREATE TABLE Artiste (
 
     PRIMARY KEY (id_artiste),
     FOREIGN KEY (id_universite) REFERENCES Universite (id_universite) ON DELETE SET NULL,
-    CONSTRAINT CHK_nombreFollowers CHECK (nombre_followers >= 0) -- un nombre d'utilisateurs ne peut pas être négatif
+    CONSTRAINT CHK_nombreFollowers CHECK (nombre_followers >= 0), -- un nombre d'utilisateurs ne peut pas être négatif
+    CONSTRAINT chk_email_artiste CHECK (email_artiste REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$') -- email valide
 );
 
 -- Table: Styles
@@ -366,18 +369,18 @@ DELIMITER ;
 
 /*-------------------------------------------PROCEDURES--------------------------------------------------*/
 
--- Procedure: filter_temp_table
+-- Procedure: filter_temp_table_style
 -- Description: Regroupe tous les albums du style choisi sur une table temporaire FilteredAlbums
 --
 -- Parameters:
 --     IN style_choisi: le id du style sur lequel le filtre est appliqué
 --
 -- Returns:
---     Does not return any value but populates the FilteredAlbums table
+--     Ne retourne pas de valeur mais rempli la table FilteredAlbums
 
 DELIMITER //
 
-CREATE PROCEDURE filter_temp_table(in style_choisi integer)
+CREATE PROCEDURE filter_temp_table_style(in style_choisi integer)
 
 BEGIN
 
@@ -386,6 +389,32 @@ BEGIN
 
     INSERT INTO FilteredAlbums
     SELECT * FROM Album WHERE id_style = style_choisi;
+
+end //
+
+DELIMITER ;
+
+
+-- Procedure: filter_temp_table_uni
+-- Description: Regroupe tous les artistes de l'université choisie sur une table temporaire FilteredArtistes
+--
+-- Parameters:
+--     IN uni_choisi: le id de l'université sur laquelle le filtre est appliqué
+--
+-- Returns:
+--     Ne retourne pas de valeur mais rempli la table FilteredArtistes
+
+DELIMITER //
+
+CREATE PROCEDURE filter_temp_table_uni(in uni_choisi integer)
+
+BEGIN
+
+    DROP TEMPORARY TABLE IF EXISTS FilteredArtistes;
+    CREATE TEMPORARY TABLE IF NOT EXISTS FilteredArtistes LIKE Artiste;
+
+    INSERT INTO FilteredArtistes
+    SELECT * FROM Artiste WHERE id_universite = uni_choisi;
 
 end //
 

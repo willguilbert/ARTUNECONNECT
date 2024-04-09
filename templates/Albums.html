@@ -17,9 +17,9 @@
 {% endblock %} {% block content %}
 <div class="container">
     <h1>Albums</h1>
-    <h4>Filters</h4>
+    <h4>Filtres et recherche</h4>
 
-    <div class="container py-2 mt-5">
+    <divsi class="container py-2 mt-5">
         <div class="row">
             <div class="col-md-10">
                 <form method="POST" action="/albums">
@@ -43,14 +43,29 @@
                     {% endif %}
                     <label class="btn" for="{{category.id_style}}">{{category.nom}}</label>
                     {% endfor %}
-                    <button type="submit" class="btn btn-primary">Filter</button>
+
+                    <input
+                              type="text"
+                              placeholder="Rechercher un album"
+                              name="search"
+                              class="searchInput"
+                              width="6"
+                              style="border: 1px solid dimgray; margin-top: 6px"
+                            />
+
+                    <button type="submit" class="btn btn-primary">Filtrer et rechercher</button>
+
                 </form>
             </div>
         </div>
-    </div>
+    </divsi>
 
-    <div class="container py-2 mt-5">
+    <div class="container py-4 mt-5">
         <div class="row">
+            {% if not albums %}
+                <h3>Aucun album ne correspond à votre recherche</h3>
+            {% endif %}
+
             {% for album in albums %}
             <div class="col-xl-3 col-lg-4 col-sm-12 col-md-6 mb-4">
                 <a

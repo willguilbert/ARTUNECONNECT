@@ -202,15 +202,17 @@ def albums():
     try:
         if request.method == 'POST':
             chosen = request.form.get('cat')
-            albums = BackendCalls.Albums.getAlbums(chosen)
+            # S'assurer que search est secure, injections SQL possibles
+            search = request.form.get('search')
+            albums = BackendCalls.Albums.getAlbums(chosen, search)
             categories = BackendCalls.Albums.getCategories()
             return render_template('Albums.html', albums=albums, categories = categories, choisie = chosen)
         else:
-            albums = BackendCalls.Albums.getAlbums(None)
+            albums = BackendCalls.Albums.getAlbums(None, None)
             categories = BackendCalls.Albums.getCategories()
             return render_template('Albums.html', albums=albums, categories = categories)
     except Exception as e:
-        albums = BackendCalls.Albums.getAlbums(None)
+        albums = BackendCalls.Albums.getAlbums(None, None)
         categories = BackendCalls.Albums.getCategories()
         flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les albums.", 'error')
         return render_template('Albums.html', albums=albums, categories=categories)
@@ -301,7 +303,7 @@ def universities():
     return render_template('Universites.html', universites=universites)
 
 
-@app.route('/artistes')
+@app.route('/artistes', methods = ['GET', 'POST'])
 def artistes():
     """
        Endpoint pour les artistes.
@@ -309,11 +311,31 @@ def artistes():
        :return: Render template de la page artistes avec l'ensemble des artistes.
        """
     try:
-        artistes = BackendCalls.Artistes.getArtistes()
+        uni = request.args.get('uni')
+        if uni is not None:
+            chosen = uni
+            artistes = BackendCalls.Artistes.getArtistes(chosen, None)
+            universites = BackendCalls.Artistes.getUniversities()
+            return render_template('Artistes.html', artistes=artistes, universites=universites)
+
+        elif request.method == 'POST':
+            chosen = request.form.get('cat')
+            if chosen == 'Selectionner une université':
+                chosen = None
+            search = request.form.get('search')
+            artistes = BackendCalls.Artistes.getArtistes(chosen, search)
+            universites = BackendCalls.Artistes.getUniversities()
+            return render_template('Artistes.html', artistes=artistes, universites=universites)
+
+        else:
+            artistes = BackendCalls.Artistes.getArtistes(None, None)
+            universites = BackendCalls.Artistes.getUniversities()
+            return render_template('Artistes.html', artistes=artistes, universites = universites)
     except Exception as e:
+        artistes = BackendCalls.Artistes.getArtistes(None, None)
+        universites = BackendCalls.Artistes.getUniversities()
         flash("Erreur interne. Veuillez rafraichir la page. Impossible de charger les Artistes.", "error")
-        return render_template('Artistes.html', artistes=artistes)
-    return render_template('Artistes.html', artistes=artistes)
+        return render_template('Artistes.html', artistes=artistes, universites=universites)
 
 
 @app.route('/album/<string:album_titre>/<int:id_artiste>')

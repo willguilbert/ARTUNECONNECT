@@ -32,14 +32,16 @@
 
             {% for universite in universites %}
             <div class="col-xl-3 col-lg-4 col-sm-12 col-md-6 mb-4">
-                <div class="card">
-                    <img src="{{ universite.photo_universite }}" alt="Card 1 Image">
-                    <h4 class="card-title">{{ universite.nom }} </h4>
-                    <div class="tags">
-                        <div class="tag">{{ universite.nomRegion['nom'] }}</div>
-                        <div class="tag">{{ universite.nombre_artistes }} Artists</div>
+                <a href="{{url_for('artistes', uni=universite.id_universite) }}">
+                    <div class="card">
+                        <img src="{{ universite.photo_universite }}" alt="Card 1 Image">
+                        <h4 class="card-title">{{ universite.nom }} </h4>
+                        <div class="tags">
+                            <div class="tag">{{ universite.nomRegion['nom'] }}</div>
+                            <div class="tag">{{ universite.nombre_artistes }} Artists</div>
+                        </div>
                     </div>
-                </div>
+                </a>
             </div>
             {% endfor %}
 

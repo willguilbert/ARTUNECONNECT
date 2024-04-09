@@ -62,14 +62,16 @@
 <h3>Universités populaires</h3>
 <div class="horizontal-scroll-container">
     {% for uni in rowsUniversite %}
-    <div class="card">
-        <img src="{{ uni.photo_universite }}" alt="Card 1 Image">
-        <h4 class="card-title">{{ uni.nom }} </h4>
-        <div class="tags">
-            <div class="tag">{{ uni.nomRegion['nom'] }}</div>
-            <div class="tag">{{ uni.nombre_artistes }} Artists</div>
+    <a href="{{url_for('artistes', uni=uni.id_universite) }}">
+        <div class="card">
+            <img src="{{ uni.photo_universite }}" alt="Card 1 Image">
+            <h4 class="card-title">{{ uni.nom }} </h4>
+            <div class="tags">
+                <div class="tag">{{ uni.nomRegion['nom'] }}</div>
+                <div class="tag">{{ uni.nombre_artistes }} Artists</div>
+            </div>
         </div>
-    </div>
+    </a>
     {% endfor %}
 </div>
 <button class="browse-button">
