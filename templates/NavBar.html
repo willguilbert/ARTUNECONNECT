@@ -20,28 +20,13 @@
           <a href="{{url_for('main')}}">
             <img
               src="{{ url_for('static', filename='imgs/LogoArtTune.png') }}"
-              width="106"
-              height="64"
+              width="150"
+              height="100"
               alt="ArtTune Logo"
             />
           </a>
         </div>
-        <div class="navItem">
-          <div class="search">
-            <input
-              type="text"
-              placeholder="Rechercher ici"
-              class="searchInput"
-            />
-            <img
-              src="{{ url_for('static', filename='imgs/Search.png') }}"
-              width="20"
-              height="20"
-              alt=""
-              class="searchIcon"
-            />
-          </div>
-        </div>
+
         <div class="navItem">
             {% if 'loggedin' in session and session['loggedin'] %}
                 <a href="{{url_for('userpage')}}">

@@ -151,7 +151,7 @@ def register():
     ou bien un message d'erreur.
     """
     msg = ''
-    if request.method == 'POST' and 'prenom' in request.form and 'nom' in request.form and 'password' in request.form and 'email' in request.form:
+    if request.method == 'POST' and 'prenom' in request.form and 'nom' in request.form and 'password' in request.form and 'email' in request.form and 'region_choice' in request.form and 'age' in request.form :
         password = request.form['password'].encode('utf-8')
         email = request.form['email']
         nom = request.form['nom']
@@ -160,6 +160,7 @@ def register():
         link = request.form['lien_reseaux_sociaux']
         bio = request.form['bio']
         region = request.form['region_choice']
+
         if len(email) > 63 or len(nom) > 31 or len(prenom) > 31  or len(bio)>100:
             msg = "Erreur dans l'un des champs entré"
             return render_template('Register.html', msg=msg)
@@ -178,7 +179,7 @@ def register():
             connection.commit()
             msg = "Compte créé"
             return render_template('Register.html', msg=msg)
-    elif request.method == 'POST':
+    else:
         msg = 'Vous devez remplir le formulaire!'
 
     cursor.execute('SELECT id_region, nom FROM Region;')
