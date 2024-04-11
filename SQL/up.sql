@@ -13,7 +13,7 @@ CREATE TABLE Region (
     id_region INTEGER AUTO_INCREMENT, -- PRIMARY KEY
     nom VARCHAR(64), -- nom d'une région
 
-    PRIMARY KEY (id_region)
+    CONSTRAINT UNIVERSITE_PK PRIMARY KEY (id_region)
 );
 
 -- Table: Universite
@@ -24,8 +24,8 @@ CREATE TABLE Universite (
     nombre_artistes INTEGER DEFAULT 0, -- nombre d'artistes allant à cette université
     photo_universite VARCHAR(256), -- photo du logo de l'université
 
-    PRIMARY KEY (id_universite),
-    FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL,
+    CONSTRAINT UNIVERSITE_PK PRIMARY KEY (id_universite),
+    CONSTRAINT UNIVERSITE_FK00 FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL,
     CONSTRAINT CHK_nombreArtistes CHECK (nombre_artistes >= 0) -- un nombre d'artiste ne peux pas être négatif
 );
 
@@ -41,9 +41,9 @@ CREATE TABLE Utilisateur (
     liens_reseaux_sociaux VARCHAR(256),
     id_region INTEGER, -- FOREIGN KEY
 
-    PRIMARY KEY (id_utilisateur),
-    FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL,
-    UNIQUE (email), -- Un seul compte peut être créé par adresse courriel
+    CONSTRAINT UTILISATEUR_PK PRIMARY KEY (id_utilisateur),
+    CONSTRAINT UTILISATEUR_FK00 FOREIGN KEY (id_region) REFERENCES Region (id_region) ON DELETE SET NULL,
+    CONSTRAINT UTILISATEUR_UQ00 UNIQUE (email), -- Un seul compte peut être créé par adresse courriel
     CONSTRAINT check_age CHECK (age >= 1 AND age <= 130), -- Ages possibles
     CONSTRAINT chk_email_utilisateur CHECK (email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$') -- email valide
 );
@@ -59,8 +59,8 @@ CREATE TABLE Artiste (
     nombre_followers INTEGER DEFAULT 0, -- nombre d'utilisateurs qui suivent un artiste
     photo_artiste VARCHAR(256), -- photo de profil d'un artiste
 
-    PRIMARY KEY (id_artiste),
-    FOREIGN KEY (id_universite) REFERENCES Universite (id_universite) ON DELETE SET NULL,
+    CONSTRAINT ARTISTE_PK PRIMARY KEY (id_artiste),
+    CONSTRAINT ARTISTE_FK00 FOREIGN KEY (id_universite) REFERENCES Universite (id_universite) ON DELETE SET NULL,
     CONSTRAINT CHK_nombreFollowers CHECK (nombre_followers >= 0), -- un nombre d'utilisateurs ne peut pas être négatif
     CONSTRAINT chk_email_artiste CHECK (email_artiste REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$') -- email valide
 );
@@ -70,7 +70,7 @@ CREATE TABLE Styles (
     id_style INTEGER AUTO_INCREMENT, -- PRIMARY KEY
     nom VARCHAR(32), -- nom d'un style musical
 
-    PRIMARY KEY (id_style)
+    CONSTRAINT STYLES_PK PRIMARY KEY (id_style)
 );
 
 -- Table: Produit
@@ -78,7 +78,7 @@ CREATE TABLE Produit (
     id_produit INTEGER AUTO_INCREMENT, -- PRIMARY KEY
     prix REAL, -- prix d'un produit
 
-    PRIMARY KEY (id_produit)
+    CONSTRAINT PRODUIT_PK PRIMARY KEY (id_produit)
 );
 
 -- Table: Merch
@@ -92,9 +92,9 @@ CREATE TABLE Merch (
     id_artiste INTEGER NOT NULL, -- FOREIGN KEY
     photo_merch VARCHAR(256), -- photo de l'article de marchandise
 
-    PRIMARY KEY (id_merch),
-    FOREIGN KEY (id_produit) REFERENCES Produit (id_produit) ON DELETE CASCADE,
-    FOREIGN KEY (id_artiste) REFERENCES Artiste (id_artiste) ON DELETE CASCADE
+    CONSTRAINT MERCH_PK PRIMARY KEY (id_merch),
+    CONSTRAINT MERCH_FK00 FOREIGN KEY (id_produit) REFERENCES Produit (id_produit) ON DELETE CASCADE,
+    CONSTRAINT MERCH_FK01 FOREIGN KEY (id_artiste) REFERENCES Artiste (id_artiste) ON DELETE CASCADE
 );
 
 -- Table: Album
@@ -109,10 +109,10 @@ CREATE TABLE Album (
     duree REAL DEFAULT 0.0, -- duree totale d'un album
     photo_album VARCHAR(256), -- photo de couverture d'un album
 
-    PRIMARY KEY(id_album),
-    FOREIGN KEY(id_artiste) REFERENCES Artiste (id_artiste),
-    FOREIGN KEY(id_style) REFERENCES Styles (id_style),
-    FOREIGN KEY(id_produit) REFERENCES Produit (id_produit),
+    CONSTRAINT ALBUM_PK PRIMARY KEY(id_album),
+    CONSTRAINT ALBUM_FK00 FOREIGN KEY(id_artiste) REFERENCES Artiste (id_artiste),
+    CONSTRAINT ALBUM_FK01 FOREIGN KEY(id_style) REFERENCES Styles (id_style),
+    CONSTRAINT ALBUM_FK02 FOREIGN KEY(id_produit) REFERENCES Produit (id_produit),
     CONSTRAINT CHK_noteGlobal CHECK (noteglobal >= 1 AND noteglobal <=5), -- la note globale d'un album doit être entre 1 et 5
     CONSTRAINT CHK_duree CHECK (duree >= 0.0) -- la duree d'un album ne peut pas être négative
 );
@@ -124,8 +124,8 @@ CREATE TABLE Chanson (
     titre VARCHAR(32) NOT NULL, -- titre d'une chanson
     duree REAL, -- duree d'une chanson
 
-    PRIMARY KEY (id_chanson),
-    FOREIGN KEY (id_album) REFERENCES Album (id_album)
+    CONSTRAINT CHANSON_PK PRIMARY KEY (id_chanson),
+    CONSTRAINT CHANSON_PK FOREIGN KEY (id_album) REFERENCES Album (id_album)
 );
 
 -- Table: Transaction
@@ -135,9 +135,9 @@ CREATE TABLE Transaction (
     id_utilisateur INTEGER NOT  NULL, -- FOREIGN KEY
     date_transaction DATE DEFAULT (CURRENT_DATE), -- date de la transaction
 
-    PRIMARY KEY(id_transaction),
-    FOREIGN KEY(id_produit) REFERENCES Produit (id_produit),
-    FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur (id_utilisateur)
+    CONSTRAINT TRANSACTION_PK PRIMARY KEY(id_transaction),
+    CONSTRAINT TRANSACTION_FK00 FOREIGN KEY(id_produit) REFERENCES Produit (id_produit),
+    CONSTRAINT TRANSACTION_FK01 FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur (id_utilisateur)
 );
 
 -- Table: Noter
@@ -147,9 +147,9 @@ CREATE TABLE Noter (
     note INTEGER, -- note donnée à un album sur 5
     review VARCHAR(2056), -- commentaire donné sur un album
 
-    PRIMARY KEY (id_utilisateur, id_album), -- un utilisateur ne peut pas mettre multiples reviews sur le même album
-    FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur (id_utilisateur),
-    FOREIGN KEY (id_album) REFERENCES Album (id_album),
+    CONSTRAINT NOTER_PK PRIMARY KEY (id_utilisateur, id_album), -- un utilisateur ne peut pas mettre multiples reviews sur le même album
+    CONSTRAINT NOTER_FK00 FOREIGN KEY (id_utilisateur) REFERENCES Utilisateur (id_utilisateur),
+    CONSTRAINT NOTER_FK01 FOREIGN KEY (id_album) REFERENCES Album (id_album),
     CONSTRAINT CHK_NoterNote CHECK (note >= 1 AND note <=5) -- une note doit être entre 1 et 5 étoiles
 );
 
@@ -158,9 +158,9 @@ CREATE TABLE Suivre (
     id_utilisateur INTEGER NOT NULL, -- PRIMARY KEY (1/2) - FOREIGN KEY
     id_artiste INTEGER NOT NULL, -- PRIMARY KEY (2/2) - FOREIGN KEY
 
-    PRIMARY KEY (id_utilisateur, id_artiste),
-    FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur (id_utilisateur),
-    FOREIGN KEY(id_artiste) REFERENCES Artiste (id_artiste)
+    CONSTRAINT SUIVRE_PK PRIMARY KEY (id_utilisateur, id_artiste),
+    CONSTRAINT SUIVRE_FK00 FOREIGN KEY(id_utilisateur) REFERENCES Utilisateur (id_utilisateur),
+    CONSTRAINT SUIVRE_FK01 FOREIGN KEY(id_artiste) REFERENCES Artiste (id_artiste)
 );
 
 /*------------------------------------------TRIGGERS--------------------------------------------------*/
@@ -1435,3 +1435,12 @@ INSERT INTO Chanson (id_album, titre, duree) VALUES
 -- Noter (aucunes données initiales)
 
 -- Suivre (aucunes données initiales)
+
+/*-------------------------------------------INDEXES--------------------------------------------------*/
+CREATE INDEX IX_CHANSON_ID_ALBUM ON Chanson(id_album) USING BTREE;   
+
+CREATE INDEX IX_ALBUM_ID_ARTISTE_TITRE ON Albums(id_artiste, titre) USING HASH;
+
+CREATE INDEX IX_ARTISTE_ID_UNIVERSITE ON Artiste(id_universite) USING BTREE;
+
+CREATE INDEX IX_MERCH_ID_ARTISTE ON Merch(id_artiste) USING BTREE;
