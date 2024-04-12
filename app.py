@@ -239,7 +239,7 @@ def unfollow():
         except Exception as e:
             return jsonify({'error': str(e)}), 500
 
-@app.route('/follow', methods=['POST', 'DELETE'])
+@app.route('/follow', methods=['POST', 'DELETE', 'GET'])
 def follow():
     """
     Endpoint follow.
@@ -254,23 +254,27 @@ def follow():
     id_artiste = request.args.get('artiste_id')
 
     try:
-        if request.method == 'POST':
+        if request.method == 'GET':
+            cursor.execute("SELECT 1 FROM Suivre WHERE id_utilisateur = %s AND id_artiste = %s",
+                           (id_utilisateur, id_artiste))
+            follows = cursor.fetchone() is not None
+            return jsonify({'follows': follows})
+
+        elif request.method == 'POST':
             cursor.execute("SELECT 1 FROM Suivre WHERE id_utilisateur = %s AND id_artiste = %s",
                            (id_utilisateur, id_artiste))
             is_following = cursor.fetchone() is not None
             if is_following:
-                cursor.execute("DELETE FROM Suivre WHERE id_utilisateur = %s AND id_artiste = %s",
-                               (id_utilisateur, id_artiste))
-            else:
-                cursor.execute("INSERT INTO Suivre (id_utilisateur, id_artiste) VALUES (%s, %s)",
-                               (id_utilisateur, id_artiste))
-            follows = not is_following
-        else:
-            cursor.execute("SELECT 1 FROM Suivre WHERE id_utilisateur = %s AND id_artiste = %s",
+                return jsonify({'error': 'Already following'}), 400
+            cursor.execute("INSERT INTO Suivre (id_utilisateur, id_artiste) VALUES (%s, %s)",
                            (id_utilisateur, id_artiste))
-            follows = cursor.fetchone() is not None
+            return jsonify({'follows': True})
 
-        return jsonify({'follows': follows})
+        elif request.method == 'DELETE':
+            cursor.execute("DELETE FROM Suivre WHERE id_utilisateur = %s AND id_artiste = %s",
+                           (id_utilisateur, id_artiste))
+            return jsonify({'follows': False})
+
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 

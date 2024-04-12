@@ -26,7 +26,7 @@
                 {% if album.noteglobal is none %}
                 <div class="tag">Aucune note</div>
                 {% else %}
-                <div class="tag">{{ album.noteglobal }} Étoiles</div>
+                <div class="tag">{{ '%0.1f'|format(album.noteglobal) }} Étoiles</div>
                 {% endif %}
             </div>
         </div>

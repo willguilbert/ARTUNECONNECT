@@ -16,6 +16,19 @@ document.addEventListener('DOMContentLoaded', function() {
         followButton.classList.toggle('btn-danger', isFollowing);
         followButton.classList.toggle('btn-primary', !isFollowing);
     }
+     fetch(`/follow?artiste_id=${artisteId}`)
+    .then(response => response.json())
+    .then(data => {
+        if(data.error) {
+            console.error('Error:', data.error);
+        } else {
+            updateFollowButton(data.follows);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+
     /*
     Fonction qui envoie le AJAX call au endpoint follow selon la methode DELETE ou POST qui est decider selon
     le boolean isFollowing.
